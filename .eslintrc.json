@@ -1,0 +1,48 @@
+{
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint-config-standard-with-typescript",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "no-new": "off",
+    "n/no-callback-literal": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/return-await": "off",
+    "@typescript-eslint/consistent-type-assertions": "off",
+    "@typescript-eslint/prefer-readonly": "off",
+    "@typescript-eslint/no-misused-promises": "off"
+  },
+
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "prettier"
+  ],
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": ["./tsconfig.paths.json"]
+      }
+    }
+  }
+}
