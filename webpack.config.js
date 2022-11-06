@@ -3,7 +3,7 @@ const nodeExternals = require('webpack-node-externals')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 const NodemonPlugin = require('nodemon-webpack-plugin')
 const Dotenv = require('dotenv-webpack')
-// const CopyPlugin = require('copy-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -42,7 +42,6 @@ module.exports = {
         exclude: [
           [
             path.resolve(__dirname, 'node_modules'),
-            path.resolve(__dirname, '.serverless'),
             path.resolve(__dirname, '.webpack'),
             path.resolve(__dirname, '.docker')
           ]
@@ -54,5 +53,16 @@ module.exports = {
       }
     ]
   },
-  plugins: [new NodemonPlugin(), new Dotenv()]
+  plugins: [
+    new NodemonPlugin(),
+    new Dotenv(),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.join(__dirname, '/prisma'),
+          to: path.join(__dirname, '/.webpack')
+        }
+      ]
+    })
+  ]
 }
