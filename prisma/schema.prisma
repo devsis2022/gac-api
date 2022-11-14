@@ -9,3 +9,147 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id               Int                @id @default(autoincrement())
+  name             String?            @db.VarChar(50)
+  username         String?            @unique @db.VarChar(30)
+  password         String             @db.VarChar(255)
+  cpf              String?            @db.Char(12)
+  userRole         UserRole[]
+  userRegistration UserRegistration[]
+  institution      Institution[]
+  studentActivity  StudentActivity[]
+  course           Course[]
+
+  @@map("users")
+}
+
+model Role {
+  id       Int        @id @default(autoincrement())
+  role     String     @unique @db.VarChar(50)
+  userRole UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  roleId Int  @map("role_id")
+  userId Int  @map("user_id")
+  role   Role @relation(fields: [roleId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+
+  @@map("user_roles")
+}
+
+model UserRegistration {
+  id           Int         @id @default(autoincrement())
+  userId       Int         @map("user_id")
+  registration String      @unique @db.VarChar(50)
+  user         User        @relation(fields: [userId], references: [id])
+  classUser    ClassUser[]
+
+  @@map("user_registrations")
+}
+
+model Institution {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(255)
+  description String?
+  managerId   Int      @map("manager_id")
+  manager     User     @relation(fields: [managerId], references: [id])
+  course      Course[]
+
+  @@map("institutions")
+}
+
+model Course {
+  id            Int         @id @default(autoincrement())
+  name          String      @db.VarChar(255)
+  description   String?
+  institutionId Int         @map("institution_id")
+  coordinatorId Int         @map("coordinator_id")
+  coordinator   User        @relation(fields: [coordinatorId], references: [id])
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  class         Class[]
+
+  @@unique([name, institutionId])
+  @@map("courses")
+}
+
+enum AnnouncementStatus {
+  ACTIVE  @map("active")
+  DISABLE @map("disable")
+}
+
+model Announcement {
+  id       Int                @id @default(autoincrement())
+  name     String             @db.VarChar(255)
+  status   AnnouncementStatus
+  class    Class[]
+  activity Activity[]
+
+  @@map("announcements")
+}
+
+model Class {
+  id             Int          @id @default(autoincrement())
+  code           String       @db.VarChar(255)
+  courseId       Int          @map("course_id")
+  announcementId Int          @map("announcement_id")
+  announcement   Announcement @relation(fields: [announcementId], references: [id])
+  course         Course       @relation(fields: [courseId], references: [id])
+  classUser      ClassUser[]
+
+  @@map("classes")
+}
+
+enum ClassUserStatus {
+  PENDING  @map("pending")
+  APPROVED @map("approved")
+  DENIED   @map("denied")
+}
+
+model ClassUser {
+  id             Int              @id @default(autoincrement())
+  status         ClassUserStatus
+  classId        Int              @map("class_id")
+  registrationId Int              @map("registration_id")
+  class          Class            @relation(fields: [classId], references: [id])
+  registration   UserRegistration @relation(fields: [registrationId], references: [id])
+
+  @@map("class_users")
+}
+
+model Activity {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  maxMinutes      Int               @map("max_minutes")
+  announcementId  Int               @map("announcement_id")
+  announcement    Announcement      @relation(fields: [announcementId], references: [id])
+  studentActivity StudentActivity[]
+
+  @@map("activities")
+}
+
+enum StudentActivityStatus {
+  PENDING  @map("pending")
+  APPROVED @map("approved")
+  REPROVED @map("reproved")
+}
+
+model StudentActivity {
+  id          Int                   @id @default(autoincrement())
+  name        String                @db.VarChar(255)
+  description String?
+  minutes     Int
+  receipt     String                @db.VarChar(255)
+  status      StudentActivityStatus
+  studentId   Int                   @map("student_id")
+  activityId  Int                   @map("activity_id")
+  activity    Activity              @relation(fields: [activityId], references: [id])
+  student     User                  @relation(fields: [studentId], references: [id])
+
+  @@map("student_activities")
+}
