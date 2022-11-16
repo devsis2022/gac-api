@@ -1,3 +1,3 @@
-export enum Messages {
+export enum BussinessMessage {
   USER_ALREADY_REGISTERED = 'USER_ALREADY_REGISTERED'
 }
