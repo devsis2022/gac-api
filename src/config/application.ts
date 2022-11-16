@@ -1,11 +1,12 @@
-import Express from 'express'
-import { authRoutes } from '../routes/auth.routes'
+import { authRoutes } from '@routes/auth.routes'
+import Express, { json } from 'express'
 
 export class Application {
   private express: Express.Application
 
   constructor() {
     this.express = Express()
+    this.express.use(json())
     this.initRoutes()
   }
 

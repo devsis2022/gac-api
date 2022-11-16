@@ -1,0 +1,3 @@
+export enum Messages {
+  USER_ALREADY_REGISTERED = 'USER_ALREADY_REGISTERED'
+}

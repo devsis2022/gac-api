@@ -10,12 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Auth {
+  username String @unique
+  password String
+
+  @@map("auth")
+}
+
 model User {
   id               Int                @id @default(autoincrement())
-  name             String?            @db.VarChar(50)
-  username         String?            @unique @db.VarChar(30)
+  name             String             @db.VarChar(50)
+  email            String             @unique @db.VarChar(30)
   password         String             @db.VarChar(255)
-  cpf              String?            @db.Char(12)
+  cpf              String             @db.Char(12)
   userRole         UserRole[]
   userRegistration UserRegistration[]
   institution      Institution[]
