@@ -29,6 +29,7 @@
   "homepage": "https://github.com/devsis2022/gac-api#readme",
   "dependencies": {
     "@prisma/client": "^4.5.0",
+    "@sendgrid/mail": "^7.7.0",
     "@types/jsonwebtoken": "^8.5.9",
     "cpf-cnpj-validator": "^1.0.3",
     "dotenv": "^16.0.3",
