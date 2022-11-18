@@ -1,6 +1,5 @@
-export interface SigninDTO {
-  name: string
-  email: string
-  password: string
-  cpf: string
+import { User } from '@prisma/client'
+
+export interface SigninDTO extends Omit<User, 'username' | 'id'> {
+  username?: string
 }

@@ -12,6 +12,7 @@ const cpfValidator: CustomValidator = (value: string, helpers: CustomHelpers) =>
 
 export const signinSchema = joi.object<SigninDTO>({
   name: joi.string().required(),
+  username: joi.string(),
   email: joi.string().email().required(),
   password: joi.string().min(6).required(),
   cpf: joi.string().custom(cpfValidator).required()

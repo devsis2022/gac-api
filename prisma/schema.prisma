@@ -20,6 +20,7 @@ model Auth {
 model User {
   id               Int                @id @default(autoincrement())
   name             String             @db.VarChar(50)
+  username         String             @unique @db.VarChar(30)
   email            String             @unique @db.VarChar(30)
   password         String             @db.VarChar(255)
   cpf              String             @db.Char(12)
