@@ -1,4 +1,5 @@
 import { authRoutes } from '@routes/auth.routes'
+import { routes as institutionRoutes } from '@routes/institutions.routes'
 import Express, { json } from 'express'
 
 export class Application {
@@ -12,6 +13,7 @@ export class Application {
 
   private initRoutes(): void {
     this.express.use('/auth', authRoutes)
+    this.express.use('/institution', institutionRoutes)
   }
 
   init(): void {
