@@ -19,9 +19,9 @@ model Auth {
 
 model User {
   id               Int                @id @default(autoincrement())
-  name             String             @db.VarChar(50)
+  name             String             @db.VarChar(100)
   username         String             @unique @db.VarChar(30)
-  email            String             @unique @db.VarChar(30)
+  email            String             @unique @db.VarChar(100)
   password         String             @db.VarChar(255)
   cpf              String             @db.Char(12)
   userRole         UserRole[]
@@ -61,12 +61,18 @@ model UserRegistration {
   @@map("user_registrations")
 }
 
+enum InstitutionStatus {
+  active
+  pending
+}
+
 model Institution {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique @db.VarChar(255)
+  id          Int               @id @default(autoincrement())
+  name        String            @unique @db.VarChar(255)
   description String?
-  managerId   Int      @map("manager_id")
-  manager     User     @relation(fields: [managerId], references: [id])
+  status      InstitutionStatus @default(pending)
+  managerId   Int               @map("manager_id")
+  manager     User              @relation(fields: [managerId], references: [id])
   course      Course[]
 
   @@map("institutions")

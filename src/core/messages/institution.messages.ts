@@ -1,1 +1,5 @@
-export enum InstitutionMessage {}
+export enum InstitutionMessage {
+  NOT_FOUND = 'INSTITUTION_NOT_FOUND',
+  ALREADY_ACTIVE = 'INSTITUTION_ALREADY_ACTIVED',
+  UPDATE_ERROR = 'SERVER_ERROR_ON_UPDATE_INSTITUTION'
+}

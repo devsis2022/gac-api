@@ -15,8 +15,9 @@ export class Application {
   }
 
   init(): void {
-    this.express.listen(process.env.PORT, () => {
-      console.log('Server started')
+    const PORT = process.env.PORT ?? 3000
+    this.express.listen(PORT, () => {
+      console.log(`Server started on port ${PORT}`)
     })
   }
 }
