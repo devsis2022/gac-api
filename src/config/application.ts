@@ -1,6 +1,8 @@
+import Express, { json } from 'express'
+import swagger from 'swagger-ui-express'
+import * as swaggerConfig from '../../swagger.json'
 import { authRoutes } from '@routes/auth.routes'
 import { routes as institutionRoutes } from '@routes/institutions.routes'
-import Express, { json } from 'express'
 
 export class Application {
   private express: Express.Application
@@ -8,6 +10,7 @@ export class Application {
   constructor() {
     this.express = Express()
     this.express.use(json())
+    this.express.use('/api-docs', swagger.serve, swagger.setup(swaggerConfig))
     this.initRoutes()
   }
 
