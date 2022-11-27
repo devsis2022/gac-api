@@ -18,6 +18,7 @@ routes.post(
 )
 routes.put(
   '/:institutionId/activate',
+  authMiddleware([Roles.ADMIN]),
   institutionController.approveRegister.bind(institutionController)
 )
 
