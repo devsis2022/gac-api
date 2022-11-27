@@ -13,6 +13,7 @@ const institutionController = container.get(InstitutionController)
 // institutions
 routes.post(
   '/',
+  authMiddleware([]),
   bodyValidator(requestInstitutionSchema),
   institutionController.requestRegister.bind(institutionController)
 )

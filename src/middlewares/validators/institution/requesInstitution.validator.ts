@@ -5,5 +5,5 @@ export const requestInstitutionSchema = joi.object<InputCreateInstitutionDTO>({
   name: joi.string().required().max(255),
   nickname: joi.string().max(100),
   description: joi.string(),
-  managerId: joi.number()
+  managerId: joi.number().required()
 })

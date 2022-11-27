@@ -25,7 +25,10 @@ export class InstitutionController {
     res: Response
   ): Promise<IResponse<OutputCreateInstitutionDTO>> {
     try {
-      const institution = await this.institutionRepository.create(req.body)
+      const institution = await this.institutionRepository.create({
+        ...req.body,
+        managerId: Number(req.userId)
+      })
       return res.status(201).json({ id: institution.id })
     } catch (err) {
       console.log(err)
