@@ -1,0 +1,296 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "gac-api 2022-2",
+    "description": "API para acessar os dados de atividades complementares. Trabalho da turma 20211GR.ADS",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Rotas destinadas a autenticação"
+    },
+    {
+      "name": "Institutions",
+      "description": "Ações referentes a instituições"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Gerar accessToken",
+        "description": "Retorna o token de acesso do usuário",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "henriquefarias.gr015@academico.ifsul.edu.br"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "gac2022"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Logado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjY5NTA5ODk2LCJleHAiOjE2Njk1MTE2OTZ9.JbqP0Rsc2a4c9_I-bh7llrdH1AQleUtYmVuuk6aZH4Y"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "INVALID_LOGIN"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institution": {
+      "post": {
+        "tags": [
+          "Institutions"
+        ],
+        "summary": "Cadastrar nova instituição",
+        "description": "O usuário que cadastra a instituição fica vinculada como gestor principal. Instituição cadastrada com status='pendente'",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "IFSUL - Instituto Federal de Tecnologia e Ciências sul-riograndense"
+                  },
+                  "nickname": {
+                    "type": "string",
+                    "example": "ifsul"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Escola técnica e universidade de tecnologia, formando os melhores profissionais de TI do mercado gaúcho"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Cadastrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEntity"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição não passou na validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedUser"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Este erro acontecerá caso haja algum problema na persistência dos dados. Como o apelido da instituição já existir",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEntityFailed"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institution/{institutionId}/activate": {
+      "put": {
+        "tags": [
+          "Institutions"
+        ],
+        "parameters": [
+          {
+            "description": "ID referente á instituição que irá ser ativada",
+            "name": "institutionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "summary": "Ativar instituição",
+        "description": "Rota exclusiva para administradores",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Instituição ativada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEntity"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedUser"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Este erro acontecerá caso ocorra um erro inesperado durante a ativação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "SERVER_ERROR_ON_UPDATE_INSTITUTION"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "UnauthorizedUser": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "UNAUTORIZED"
+          }
+        }
+      },
+      "CreateEntityFailed": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "FAILED_TO_CREATE_ENTITY"
+          }
+        }
+      },
+      "BadRequest": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "error": {
+              "example": {
+                "field": "name",
+                "key": "field.required"
+              },
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

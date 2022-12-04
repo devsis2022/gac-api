@@ -1,3 +1,3 @@
 import { Request } from 'express'
 
-export interface IRequest<body = {}, params = {}> extends Request<params, {}, body> {}
+export type IRequest<body = {}, params = { [key: string]: string }> = Request<params, {}, body>

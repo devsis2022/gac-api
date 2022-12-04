@@ -1,8 +1,5 @@
-import { Response } from 'express'
-import { IError } from 'src/core/interfaces/error'
-
 export interface ParamsApproveInstitutionDto {
-  institutionId: number
+  institutionId?: number
 }
 
 export interface OutputApproveInstitutionDto {
