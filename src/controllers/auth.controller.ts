@@ -39,7 +39,7 @@ export class AuthController {
   async login(req: IRequest<LoginDTO>, res: Response): Promise<any> {
     const body = req.body
 
-    const user = await this.userRepository.findByEmailAndPassword(body)
+    const user = await this.userRepository.findByUserAndPassword(body)
 
     if (!user) {
       return res.status(401).json({ message: AuthMessage.INVALID_LOGIN })
