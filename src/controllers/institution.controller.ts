@@ -1,4 +1,4 @@
-import { prismaClientToken } from '@config/prismaClient'
+import { prismaClientToken } from '@config/prisma-client'
 import { Prisma, PrismaClient, PrismaPromise } from '@prisma/client'
 import { Response } from 'express'
 import { inject, injectable } from 'inversify'

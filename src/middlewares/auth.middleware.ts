@@ -9,7 +9,6 @@ export const authMiddleware = (allowedRoles: Array<`${Roles}`>) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization)
       return res.status(401).json({ message: AuthMessage.UNAUTHORIZED })
-
     const token = req.headers.authorization.split(' ')[1]
     const payload = tokenUtils.verifyJwt(token)
 
