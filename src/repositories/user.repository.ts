@@ -16,13 +16,24 @@ export class UserRepository {
     })
   }
 
-  async findByEmailAndPassword(dto: LoginDTO): Promise<User | null> {
+  async findByUserAndPassword(dto: LoginDTO): Promise<User | null> {
     return await this.prisma.user.findFirst({
       where: {
-        AND: {
-          email: dto.email,
-          password: encryptMd5(dto.password)
-        }
+        AND: [
+          {
+            OR: [
+              {
+                email: dto.user
+              },
+              {
+                username: dto.user
+              }
+            ]
+          },
+          {
+            password: encryptMd5(dto.password)
+          }
+        ]
       }
     })
   }

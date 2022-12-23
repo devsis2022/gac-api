@@ -9,6 +9,7 @@ import { AuthMessage } from 'src/core/messages/auth.messages'
 import { UserRepository } from 'src/repositories/user.repository'
 import { BussinessMessage } from 'src/core/messages/bussiness.message'
 import { PersistenceMessages } from 'src/core/messages/persistence.messages'
+import { sendMail } from 'src/services/email.service'
 
 @injectable()
 export class AuthController {
@@ -38,7 +39,7 @@ export class AuthController {
   async login(req: IRequest<LoginDTO>, res: Response): Promise<any> {
     const body = req.body
 
-    const user = await this.userRepository.findByEmailAndPassword(body)
+    const user = await this.userRepository.findByUserAndPassword(body)
 
     if (!user) {
       return res.status(401).json({ message: AuthMessage.INVALID_LOGIN })
@@ -47,7 +48,14 @@ export class AuthController {
     return res.json({ token: createToken({ id: user.id }) })
   }
 
-  async recovery(req: IRequest, res: Response): Promise<void> {
-    res.json({ token: 'OASIFJOAISJFAOJF SOFHJoxvosjapjkdosjaODJsaop' })
+  async recovery(req: IRequest, res: Response): Promise<any> {
+    sendMail()
+      .then((value) => {
+        console.log(value)
+        res.json({ message: 'email enviado' })
+      })
+      .catch((err) => {
+        res.json({ message: err })
+      })
   }
 }
