@@ -1,7 +1,7 @@
-export interface ParamsApproveInstitutionDto {
+export interface InputApproveInstitutionDto {
   institutionId?: number
 }
 
 export interface OutputApproveInstitutionDto {
-  id: string
+  id: number
 }

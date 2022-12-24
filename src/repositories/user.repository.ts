@@ -1,14 +1,14 @@
 import { PrismaClient, User } from '@prisma/client'
 import { injectable } from 'inversify'
+import { LoginDTO } from 'src/dto/auth/login.dto'
 import { encryptMd5 } from 'src/util/encrypt.util'
-import { LoginDTO } from 'src/dto/login.dto'
 
 @injectable()
 export class UserRepository {
   private prisma = new PrismaClient()
 
-  async findByEmailOrUsername(email: string, username: string): Promise<User[] | null> {
-    return await this.prisma.user.findMany({
+  async findByEmailOrUsername(email: string, username: string): Promise<User | null> {
+    return await this.prisma.user.findFirst({
       where: {
         email,
         username
