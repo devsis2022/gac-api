@@ -29,7 +29,7 @@ export class AuthController {
     try {
       await this.userRepository.createUser(input as User)
 
-      return { statusCode: 200, json: undefined }
+      return { statusCode: 201, json: undefined }
     } catch (err) {
       return { statusCode: 500, json: { message: PersistenceMessages.FAILED_TO_CREATE_ENTITY } }
     }
