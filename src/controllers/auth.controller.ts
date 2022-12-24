@@ -9,11 +9,16 @@ import { AuthMessage } from 'src/core/messages/auth.messages'
 import { UserRepository } from 'src/repositories/user.repository'
 import { BussinessMessage } from 'src/core/messages/bussiness.message'
 import { PersistenceMessages } from 'src/core/messages/persistence.messages'
-import { sendMail } from 'src/services/email.service'
+import { EmailService } from 'src/services/email/email.service'
+import { Email } from 'src/dto/email/email'
+import { EmailTemplate } from '@core/enums/email-template'
 
 @injectable()
 export class AuthController {
-  constructor(@inject(UserRepository) private userRepository: UserRepository) {}
+  constructor(
+    @inject(UserRepository) private userRepository: UserRepository,
+    @inject(EmailService) private emailService: EmailService
+  ) {}
 
   async signin(req: IRequest<SigninDTO>, res: Response): Promise<any> {
     const body = req.body
@@ -49,13 +54,23 @@ export class AuthController {
   }
 
   async recovery(req: IRequest, res: Response): Promise<any> {
-    sendMail()
-      .then((value) => {
-        console.log(value)
-        res.json({ message: 'email enviado' })
+    const email: Email = {
+      recipients: ['felipe.mschultz@hotmail.com'],
+      template: EmailTemplate.RECOVERY_EMAIL,
+      params: {
+        recovery_url: 'https://google.com'
+      }
+    }
+
+    this.emailService
+      .sendEmail(email)
+      .then((data) => {
+        console.log(data)
+        res.status(200).json({ message: 'Enviado' })
       })
       .catch((err) => {
-        res.json({ message: err })
+        console.log(err.response.body)
+        res.status(500).json({ message: 'Não enviado' })
       })
   }
 }
