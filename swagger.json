@@ -21,6 +21,89 @@
     }
   ],
   "paths": {
+    "/auth/signin": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Registro de usuário",
+        "description": "Registra o usuário no sistema",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password",
+                  "cpf"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "henriquefarias.gr015@academico.ifsul.edu.br"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "gac2022"
+                  },
+                  "cpf": {
+                    "type": "string",
+                    "example": "03888889293"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "henriquefarias"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registrado com sucesso",
+            "content": {
+              "application/json": {
+                
+              }
+            }
+          },
+          "422": {
+            "description": "Usuário já existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "USER_ALREADY_REGISTERED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro na persistência do usuário",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "FAILED_TO_CREATE_ENTITY"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/login": {
       "post": {
         "tags": [
@@ -232,64 +315,64 @@
           }
         }
       }
-    }
-  },
-  "components": {
-    "schemas": {
-      "CreateEntity": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "example": 1
-          }
-        }
-      },
-      "UnauthorizedUser": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "example": "UNAUTORIZED"
-          }
-        }
-      },
-      "CreateEntityFailed": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "example": "FAILED_TO_CREATE_ENTITY"
-          }
-        }
-      },
-      "BadRequest": {
-        "type": "array",
-        "items": {
+    },
+    "components": {
+      "schemas": {
+        "CreateEntity": {
+          "type": "object",
           "properties": {
-            "error": {
-              "example": {
-                "field": "name",
-                "key": "field.required"
-              },
-              "properties": {
-                "field": {
-                  "type": "string"
+            "id": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        },
+        "UnauthorizedUser": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "example": "UNAUTORIZED"
+            }
+          }
+        },
+        "CreateEntityFailed": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "example": "FAILED_TO_CREATE_ENTITY"
+            }
+          }
+        },
+        "BadRequest": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "error": {
+                "example": {
+                  "field": "name",
+                  "key": "field.required"
                 },
-                "key": {
-                  "type": "string"
+                "properties": {
+                  "field": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         }
-      }
-    },
-    "securitySchemes": {
-      "bearer": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
+      },
+      "securitySchemes": {
+        "bearer": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
       }
     }
   }

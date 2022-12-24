@@ -1,8 +1,6 @@
 import { Response } from 'express'
 import { User } from '@prisma/client'
-import { LoginDTO } from 'src/dto/login.dto'
 import { injectable, inject } from 'inversify'
-import { SigninDTO } from 'src/dto/signin.dto'
 import { createToken } from 'src/util/token.util'
 import { IRequest } from 'src/core/interfaces/request'
 import { AuthMessage } from 'src/core/messages/auth.messages'
@@ -10,42 +8,40 @@ import { UserRepository } from 'src/repositories/user.repository'
 import { BussinessMessage } from 'src/core/messages/bussiness.message'
 import { PersistenceMessages } from 'src/core/messages/persistence.messages'
 import { sendMail } from 'src/services/email.service'
+import { ControllerResponse } from '@core/interfaces/controller'
+import { SigninDTO } from 'src/dto/auth/signin.dto'
+import { LoginDTO } from 'src/dto/auth/login.dto'
 
 @injectable()
 export class AuthController {
   constructor(@inject(UserRepository) private userRepository: UserRepository) {}
 
-  async signin(req: IRequest<SigninDTO>, res: Response): Promise<any> {
-    const body = req.body
-    body.username = body.username ?? body.email.split('@')[0]
+  async signin(input: SigninDTO): Promise<ControllerResponse> {
+    input.username = input.username ?? input.email.split('@')[0]
 
-    const { email, username } = body
+    const { email, username } = input
 
     const users = await this.userRepository.findByEmailOrUsername(email, username)
-
     if (users) {
-      return res.status(422).json({ message: BussinessMessage.USER_ALREADY_REGISTERED })
+      return { statusCode: 422, json: { message: BussinessMessage.USER_ALREADY_REGISTERED } }
     }
 
     try {
-      await this.userRepository.createUser(body as User)
+      await this.userRepository.createUser(input as User)
 
-      return res.status(200).send()
+      return { statusCode: 201, json: undefined }
     } catch (err) {
-      return res.status(500).json({ message: PersistenceMessages.FAILED_TO_CREATE_ENTITY })
+      return { statusCode: 500, json: { message: PersistenceMessages.FAILED_TO_CREATE_ENTITY } }
     }
   }
 
-  async login(req: IRequest<LoginDTO>, res: Response): Promise<any> {
-    const body = req.body
-
-    const user = await this.userRepository.findByUserAndPassword(body)
+  async login(input: LoginDTO): Promise<ControllerResponse> {
+    const user = await this.userRepository.findByUserAndPassword(input)
 
     if (!user) {
-      return res.status(401).json({ message: AuthMessage.INVALID_LOGIN })
+      return { statusCode: 401, json: { message: AuthMessage.INVALID_LOGIN } }
     }
-
-    return res.json({ token: createToken({ id: user.id }) })
+    return { statusCode: 200, json: { token: createToken({ id: user.id }) } }
   }
 
   async recovery(req: IRequest, res: Response): Promise<any> {

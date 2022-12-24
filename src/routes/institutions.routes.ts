@@ -5,6 +5,7 @@ import { InstitutionController } from '@controllers/institution.controller'
 import { requestInstitutionSchema } from '@middlewares/validators/institution/requesInstitution.validator'
 import { authMiddleware } from '@middlewares/auth.middleware'
 import { Roles } from 'src/core/interfaces/roles'
+import { httpHandler } from 'src/util/http-handler.util'
 
 const routes = Router()
 
@@ -15,12 +16,12 @@ routes.post(
   '/',
   authMiddleware([]),
   bodyValidator(requestInstitutionSchema),
-  institutionController.requestRegister.bind(institutionController)
+  httpHandler(institutionController.requestRegister.bind(institutionController))
 )
 routes.put(
   '/:institutionId/activate',
   authMiddleware([Roles.ADMIN]),
-  institutionController.approveRegister.bind(institutionController)
+  httpHandler(institutionController.approveRegister.bind(institutionController))
 )
 
 export { routes }

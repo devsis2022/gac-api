@@ -1,6 +1,6 @@
 import joi, { CustomHelpers, CustomValidator } from 'joi'
 import { cpf } from 'cpf-cnpj-validator'
-import { SigninDTO } from 'src/dto/signin.dto'
+import { SigninDTO } from 'src/dto/auth/signin.dto'
 
 const cpfValidator: CustomValidator = (value: string, helpers: CustomHelpers) => {
   if (cpf.isValid(value)) {

@@ -3,7 +3,11 @@ import Joi, { ObjectSchema } from 'joi'
 
 export const bodyValidator = (schema: ObjectSchema) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    const { error } = schema.validate(joinRequest(req), { abortEarly: false, messages })
+    const { error } = schema.validate(joinRequest(req), {
+      abortEarly: false,
+      messages,
+      stripUnknown: true
+    })
 
     if (error) {
       return res.status(400).json({ error: buildErrorMessages(error) })
