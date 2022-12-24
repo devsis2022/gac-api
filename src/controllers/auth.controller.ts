@@ -4,17 +4,17 @@ import { injectable, inject } from 'inversify'
 import { createToken } from 'src/util/token.util'
 import { IRequest } from 'src/core/interfaces/request'
 import { AuthMessage } from 'src/core/messages/auth.messages'
-import { UserRepository } from 'src/repositories/user.repository'
-import { BussinessMessage } from 'src/core/messages/bussiness.message'
 import { PersistenceMessages } from 'src/core/messages/persistence.messages'
 import { sendMail } from 'src/services/email.service'
 import { ControllerResponse } from '@core/interfaces/controller'
 import { SigninDTO } from 'src/dto/auth/signin.dto'
 import { LoginDTO } from 'src/dto/auth/login.dto'
+import { UserMessage } from '@core/messages/user.message'
+import { UserRepository, UserToken } from 'src/repositories/interfaces/user.repository'
 
 @injectable()
 export class AuthController {
-  constructor(@inject(UserRepository) private userRepository: UserRepository) {}
+  constructor(@inject(UserToken) private userRepository: UserRepository) {}
 
   async signin(input: SigninDTO): Promise<ControllerResponse> {
     input.username = input.username ?? input.email.split('@')[0]
@@ -23,7 +23,7 @@ export class AuthController {
 
     const users = await this.userRepository.findByEmailOrUsername(email, username)
     if (users) {
-      return { statusCode: 422, json: { message: BussinessMessage.USER_ALREADY_REGISTERED } }
+      return { statusCode: 422, json: { message: UserMessage.USER_ALREADY_REGISTERED } }
     }
 
     try {

@@ -17,17 +17,20 @@ import {
   OutputCreateInstitutionDTO
 } from 'src/dto/institution/create.dto'
 import { InputUpdateInstitution, OutputUpdateInstitution } from 'src/dto/institution/update.dto'
-import { InstitutionRepository } from 'src/repositories/institution.repository'
-import { RoleRepository } from 'src/repositories/role.repository'
-import { UserRoleRepository } from 'src/repositories/user-role.repository'
+import {
+  InstitutionRepository,
+  InstitutionToken
+} from 'src/repositories/interfaces/institution.repository'
+import { RoleRepository, RoleToken } from 'src/repositories/interfaces/role.respository'
+import { UserRoleRepository, UserRoleToken } from 'src/repositories/interfaces/user-role.repository'
 
 @injectable()
 export class InstitutionController {
   constructor(
     @inject(prismaClientToken) private prisma: PrismaClient,
-    @inject(InstitutionRepository) private institutionRepository: InstitutionRepository,
-    @inject(UserRoleRepository) private userRolesRepository: UserRoleRepository,
-    @inject(RoleRepository) private roleRepository: RoleRepository
+    @inject(InstitutionToken) private institutionRepository: InstitutionRepository,
+    @inject(UserRoleToken) private userRolesRepository: UserRoleRepository,
+    @inject(RoleToken) private roleRepository: RoleRepository
   ) {}
 
   async requestRegister(
