@@ -7,7 +7,7 @@
     "build": "rimraf .webpack && yarn webpack",
     "start": "yarn build && node .webpack/main.js",
     "ifsul": "rimraf .webpack && npx webpack && node .webpack/main.js",
-    "dev": "npm run build --watch",
+    "dev": "yarn build --watch",
     "test": "jest",
     "test:staged": "jest --passWithNoTests --findRelatedTests --listTests",
     "prisma:gen": "prisma generate",
