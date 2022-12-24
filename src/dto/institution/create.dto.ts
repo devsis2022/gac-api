@@ -1,8 +1,7 @@
 import { Institution } from '@prisma/client'
-import { IError } from 'src/core/interfaces/error'
 
-export type InputCreateInstitutionDTO = Omit<Institution, 'id' | 'status'>
+export type InputCreateInstitutionDTO = Omit<Institution, 'id' | 'status'> & { userId: number }
 
 export interface OutputCreateInstitutionDTO {
-  id: string
+  id: number
 }

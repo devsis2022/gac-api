@@ -1,16 +1,14 @@
 import { prismaClientToken } from '@config/prisma-client'
+import { ControllerResponse } from '@core/interfaces/controller'
 import { Prisma, PrismaClient, PrismaPromise } from '@prisma/client'
-import { Response } from 'express'
 import { inject, injectable } from 'inversify'
-import { IRequest } from 'src/core/interfaces/request'
-import { IResponse } from 'src/core/interfaces/response'
 import { Roles } from 'src/core/interfaces/roles'
 import { InstitutionMessage } from 'src/core/messages/institution.messages'
 import { PersistenceMessages } from 'src/core/messages/persistence.messages'
 import { RoleMessage } from 'src/core/messages/role.messages'
 import {
   OutputApproveInstitutionDto,
-  ParamsApproveInstitutionDto
+  InputApproveInstitutionDto
 } from 'src/dto/institution/approve.dto'
 import {
   InputCreateInstitutionDTO,
@@ -30,49 +28,53 @@ export class InstitutionController {
   ) {}
 
   async requestRegister(
-    req: IRequest<InputCreateInstitutionDTO>,
-    res: Response
-  ): Promise<IResponse<OutputCreateInstitutionDTO>> {
+    input: InputCreateInstitutionDTO
+  ): Promise<ControllerResponse<OutputCreateInstitutionDTO>> {
     try {
       const institution = await this.institutionRepository.create({
-        ...req.body,
-        managerId: Number(req.userId)
+        ...input,
+        managerId: Number(input.userId)
       })
-      return res.status(201).json({ id: institution.id })
+      return { statusCode: 201, json: { id: institution.id } }
     } catch (err) {
       console.log(err)
-      return res.status(500).json({ message: PersistenceMessages.FAILED_TO_CREATE_ENTITY })
+      return { statusCode: 500, json: { message: PersistenceMessages.FAILED_TO_CREATE_ENTITY } }
     }
   }
 
   async approveRegister(
-    req: IRequest<{}, ParamsApproveInstitutionDto>,
-    res: Response
-  ): Promise<IResponse<OutputApproveInstitutionDto>> {
+    input: InputApproveInstitutionDto
+  ): Promise<ControllerResponse<OutputApproveInstitutionDto>> {
     try {
-      const institution = await this.institutionRepository.findOne(Number(req.params.institutionId))
+      const institution = await this.institutionRepository.findOne(Number(input.institutionId))
       if (!institution) {
-        return res.status(404).json({ message: InstitutionMessage.NOT_FOUND })
+        return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
       }
       if (institution.status === 'active') {
-        return res.status(400).json({ message: InstitutionMessage.ALREADY_ACTIVE })
+        return { statusCode: 400, json: { message: InstitutionMessage.ALREADY_ACTIVE } }
       }
-      await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-        await this.institutionRepository.activate(institution.id, { trx: tx })
-        const userRoles = await this.userRolesRepository.getByUserId(institution.managerId)
-        if (userRoles.find((userRole) => userRole.role.name === Roles.MANAGER) === undefined) {
-          const role = await this.roleRepository.getByName(Roles.MANAGER)
-          if (!role) return res.status(400).json({ message: RoleMessage.NOT_FOUND })
-          await this.userRolesRepository.create({
-            userId: institution.managerId,
-            roleId: role.id
-          })
+      const result: ControllerResponse | void = await this.prisma.$transaction(
+        async (tx: Prisma.TransactionClient) => {
+          await this.institutionRepository.activate(institution.id, { trx: tx })
+          const userRoles = await this.userRolesRepository.getByUserId(institution.managerId)
+          if (userRoles.find((userRole) => userRole.role.name === Roles.MANAGER) === undefined) {
+            const role = await this.roleRepository.getByName(Roles.MANAGER)
+            if (!role) return { statusCode: 400, json: { message: RoleMessage.NOT_FOUND } }
+            await this.userRolesRepository.create({
+              userId: institution.managerId,
+              roleId: role.id
+            })
+          }
         }
-      })
-      return res.status(200).json({ id: institution.id })
+      )
+      if (!!result?.statusCode) {
+        return { statusCode: result.statusCode, json: result.json as { message: string } }
+      }
+
+      return { statusCode: 200, json: { id: institution.id } }
     } catch (err) {
       console.log(err)
-      return res.status(500).json({ message: InstitutionMessage.UPDATE_ERROR })
+      return { statusCode: 500, json: { message: InstitutionMessage.UPDATE_ERROR } }
     }
   }
 }
