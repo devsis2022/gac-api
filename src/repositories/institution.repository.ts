@@ -22,4 +22,8 @@ export class InstitutionRepository {
     const prisma = options?.trx ?? this.prisma
     return prisma.institution.update({ where: { id }, data: { status: 'active' } })
   }
+
+  async update(id: number, data: Partial<Institution>): Promise<Institution> {
+    return this.prisma.institution.update({ where: { id }, data })
+  }
 }
