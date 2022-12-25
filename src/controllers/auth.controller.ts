@@ -2,15 +2,15 @@ import { injectable, inject } from 'inversify'
 import { Response } from 'express'
 import { User } from '@prisma/client'
 import { IRequest } from 'src/core/interfaces/request'
-import { UserRepository, UserToken } from 'src/repositories/interfaces/user.repository'
 import { SigninDTO } from 'src/dto/auth/signin.dto'
 import { ControllerResponse } from '@core/interfaces/controller'
 import { UserMessage } from '@core/messages/user.message'
 import { PersistenceMessages } from '@core/messages/persistence.messages'
 import { LoginDTO } from 'src/dto/auth/login.dto'
 import { AuthMessage } from '@core/messages/auth.messages'
-import { createToken } from 'src/util/token.util'
 import { sendMail } from 'src/services/email.service'
+import { createToken } from 'src/util/token.util'
+import { UserRepository, UserToken } from 'src/repositories/interfaces/user.repository'
 
 @injectable()
 export class AuthController {
