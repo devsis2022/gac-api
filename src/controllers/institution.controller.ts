@@ -1,7 +1,7 @@
 import { prismaClientToken } from '@config/prisma-client'
 import { ControllerResponse } from '@core/interfaces/controller'
 import { AuthMessage } from '@core/messages/auth.messages'
-import { Prisma, PrismaClient } from '@prisma/client'
+import { InstitutionStatus, Prisma, PrismaClient } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import { Roles } from 'src/core/interfaces/roles'
 import { InstitutionMessage } from 'src/core/messages/institution.messages'
@@ -55,7 +55,7 @@ export class InstitutionController {
       if (!institution) {
         return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
       }
-      if (institution.status === 'active') {
+      if (institution.status === InstitutionStatus.active) {
         return { statusCode: 400, json: { message: InstitutionMessage.ALREADY_ACTIVE } }
       }
       const result: ControllerResponse | undefined = await this.prisma.$transaction(
