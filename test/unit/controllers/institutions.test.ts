@@ -24,7 +24,7 @@ describe('Institution Controller', () => {
   describe('Update institution', () => {
     test('Should return statusCode 204 and update method must be called with description and name data params', async () => {
       const input = {
-        id: 1,
+        institutionId: 1,
         userId: 1,
         description: 'Description',
         name: 'Institution'
@@ -42,7 +42,7 @@ describe('Institution Controller', () => {
       const controller = container.get(InstitutionController)
       const result = await controller.update(input)
       expect(result.statusCode).toBe(204)
-      expect(updateSpy).toBeCalledWith(input.id, {
+      expect(updateSpy).toBeCalledWith(input.institutionId, {
         description: 'Description',
         name: 'Institution'
       })
@@ -50,7 +50,7 @@ describe('Institution Controller', () => {
 
     test('Should return statusCode 403 with message: "USER_ARE_NOT_AUTHORIZED"', async () => {
       const input = {
-        id: 1,
+        institutionId: 1,
         userId: 1,
         description: 'Description',
         name: 'Institution'

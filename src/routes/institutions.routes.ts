@@ -11,7 +11,7 @@ const routes = Router()
 
 const institutionController = container.get(InstitutionController)
 
-// institutions
+// /institution
 routes.post(
   '/',
   authMiddleware([]),
@@ -22,6 +22,12 @@ routes.put(
   '/:institutionId/activate',
   authMiddleware([Roles.ADMIN]),
   httpHandler(institutionController.approveRegister.bind(institutionController))
+)
+
+routes.put(
+  '/:institutionId',
+  authMiddleware([Roles.ADMIN, Roles.MANAGER]),
+  httpHandler(institutionController.update.bind(institutionController))
 )
 
 export { routes }

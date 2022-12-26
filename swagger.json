@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.2",
+  "openapi": "3.0.0",
   "info": {
     "title": "gac-api 2022-2",
     "description": "API para acessar os dados de atividades complementares. Trabalho da turma 20211GR.ADS",
@@ -7,7 +7,8 @@
   },
   "servers": [
     {
-      "url": "local environment"
+      "url": "http://localhost:3000",
+      "description": "LOCAL"
     }
   ],
   "tags": [
@@ -64,9 +65,7 @@
           "201": {
             "description": "Registrado com sucesso",
             "content": {
-              "application/json": {
-                
-              }
+              "application/json": {}
             }
           },
           "422": {
@@ -90,13 +89,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "FAILED_TO_CREATE_ENTITY"
-                    }
-                  }
+                  "$ref": "#/components/schemas/CreateEntityFailed"
                 }
               }
             }
@@ -156,13 +149,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "INVALID_LOGIN"
-                    }
-                  }
+                  "$ref": "#/components/schemas/UnauthorizedUser"
                 }
               }
             }
@@ -252,6 +239,79 @@
         }
       }
     },
+    "/institution/{institutionId}": {
+      "put": {
+        "tags": [
+          "Institutions"
+        ],
+        "parameters": [
+          {
+            "description": "ID referente á instituição que irá ser ativada",
+            "name": "institutionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "summary": "Atualizar informações sobre a instituição",
+        "description": "Rota exclusiva para administradores e gestores",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Instituição atualizada"
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Usuário não é um manager da instituição em questão ou administrador",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "USER_IS_NOT_AUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Este erro acontecerá caso ocorra um erro inesperado durante a atualização",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "SERVER_ERROR_ON_UPDATE_INSTITUTION"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/institution/{institutionId}/activate": {
       "put": {
         "tags": [
@@ -282,7 +342,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateEntity"
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1
+                    }
+                  }
                 }
               }
             }
@@ -315,64 +381,64 @@
           }
         }
       }
-    },
-    "components": {
-      "schemas": {
-        "CreateEntity": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "integer",
-              "example": 1
-            }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
           }
-        },
-        "UnauthorizedUser": {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": "string",
-              "example": "UNAUTORIZED"
-            }
+        }
+      },
+      "UnauthorizedUser": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "UNAUTORIZED"
           }
-        },
-        "CreateEntityFailed": {
-          "type": "object",
-          "properties": {
-            "message": {
-              "type": "string",
-              "example": "FAILED_TO_CREATE_ENTITY"
-            }
+        }
+      },
+      "CreateEntityFailed": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "FAILED_TO_CREATE_ENTITY"
           }
-        },
-        "BadRequest": {
-          "type": "array",
-          "items": {
-            "properties": {
-              "error": {
-                "example": {
-                  "field": "name",
-                  "key": "field.required"
+        }
+      },
+      "BadRequest": {
+        "type": "array",
+        "items": {
+          "properties": {
+            "error": {
+              "example": {
+                "field": "name",
+                "key": "field.required"
+              },
+              "properties": {
+                "field": {
+                  "type": "string"
                 },
-                "properties": {
-                  "field": {
-                    "type": "string"
-                  },
-                  "key": {
-                    "type": "string"
-                  }
+                "key": {
+                  "type": "string"
                 }
               }
             }
           }
         }
-      },
-      "securitySchemes": {
-        "bearer": {
-          "type": "http",
-          "scheme": "bearer",
-          "bearerFormat": "JWT"
-        }
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

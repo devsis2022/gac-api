@@ -62,10 +62,16 @@ export class InstitutionController {
         async (tx: Prisma.TransactionClient) => {
           await this.institutionRepository.activate(institution.id, { trx: tx })
           const userRoles = await this.userRolesRepository.getByUserId(institution.managerId)
-          if (userRoles.find((userRole) => userRole.role.name === Roles.MANAGER) === undefined) {
+          if (
+            userRoles.find(
+              (userRole) =>
+                userRole.role.name === Roles.MANAGER && userRole.institutionId === institution.id
+            ) === undefined
+          ) {
             const role = await this.roleRepository.getByName(Roles.MANAGER)
             if (!role) return { statusCode: 400, json: { message: RoleMessage.NOT_FOUND } }
             await this.userRolesRepository.create({
+              institutionId: institution.id,
               userId: institution.managerId,
               roleId: role.id
             })
@@ -85,18 +91,20 @@ export class InstitutionController {
 
   async update({
     userId,
-    id,
+    institutionId,
     ...input
   }: InputUpdateInstitution): Promise<ControllerResponse<OutputUpdateInstitution>> {
     try {
       const userRoles = await this.userRolesRepository.getByUserId(userId)
       const isCurrentInstitutionManager = userRoles.find(
-        (userRole) => userRole.role.name === Roles.MANAGER && userRole.institutionId === id
+        (userRole) =>
+          (userRole.role.name === Roles.MANAGER && userRole.institutionId === institutionId) ||
+          userRole.role.name === Roles.ADMIN
       )
       if (!isCurrentInstitutionManager) {
-        return { statusCode: 403, json: { message: AuthMessage.USER_ARE_NOT_AUTHORIZED } }
+        return { statusCode: 403, json: { message: AuthMessage.USER_IS_NOT_AUTHORIZED } }
       }
-      await this.institutionRepository.update(id, input)
+      await this.institutionRepository.update(institutionId, input)
       return { statusCode: 204, json: undefined }
     } catch (err) {
       console.log(err)
