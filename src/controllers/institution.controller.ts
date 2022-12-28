@@ -1,5 +1,6 @@
 import { prismaClientToken } from '@config/prisma-client'
 import { ControllerResponse } from '@core/interfaces/controller'
+import { IError } from '@core/interfaces/error'
 import { AuthMessage } from '@core/messages/auth.messages'
 import { InstitutionStatus, Prisma, PrismaClient } from '@prisma/client'
 import { inject, injectable } from 'inversify'
@@ -50,6 +51,7 @@ export class InstitutionController {
   async approveRegister(
     input: InputApproveInstitutionDto
   ): Promise<ControllerResponse<OutputApproveInstitutionDto>> {
+    let error: { statusCode: number; json: IError } | null = null
     try {
       const institution = await this.institutionRepository.findOne(Number(input.institutionId))
       if (!institution) {
@@ -58,33 +60,34 @@ export class InstitutionController {
       if (institution.status === InstitutionStatus.active) {
         return { statusCode: 400, json: { message: InstitutionMessage.ALREADY_ACTIVE } }
       }
-      const result: ControllerResponse | undefined = await this.prisma.$transaction(
-        async (tx: Prisma.TransactionClient) => {
-          await this.institutionRepository.activate(institution.id, { trx: tx })
-          const userRoles = await this.userRolesRepository.getByUserId(institution.managerId)
-          if (
-            userRoles.find(
-              (userRole) =>
-                userRole.role.name === Roles.MANAGER && userRole.institutionId === institution.id
-            ) === undefined
-          ) {
-            const role = await this.roleRepository.getByName(Roles.MANAGER)
-            if (!role) return { statusCode: 400, json: { message: RoleMessage.NOT_FOUND } }
-            await this.userRolesRepository.create({
-              institutionId: institution.id,
-              userId: institution.managerId,
-              roleId: role.id
-            })
+      await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        await this.institutionRepository.activate(institution.id, { trx: tx })
+        const userRoles = await this.userRolesRepository.getByUserId(institution.managerId)
+        if (
+          userRoles.find(
+            (userRole) =>
+              userRole.role.name === Roles.MANAGER && userRole.institutionId === institution.id
+          ) === undefined
+        ) {
+          const role = await this.roleRepository.getByName(Roles.MANAGER)
+          if (!role) {
+            error = { statusCode: 404, json: { message: RoleMessage.NOT_FOUND } }
+            throw new Error('')
           }
+          await this.userRolesRepository.create({
+            institutionId: institution.id,
+            userId: institution.managerId,
+            roleId: role.id
+          })
         }
-      )
-      if (result?.statusCode) {
-        return { statusCode: result.statusCode, json: result.json as { message: string } }
-      }
+      })
 
       return { statusCode: 200, json: { id: institution.id } }
     } catch (err) {
       console.log(err)
+      if (error) {
+        return error
+      }
       return { statusCode: 500, json: { message: InstitutionMessage.UPDATE_ERROR } }
     }
   }

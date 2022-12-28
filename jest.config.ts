@@ -14,7 +14,7 @@ const config: Config.InitialOptions = {
   coverageProvider: 'v8',
   coverageReporters: ['json', 'text', 'lcov', 'clover'],
   moduleFileExtensions: ['js', 'ts', 'json', 'node'],
-  verbose: false,
+  verbose: true,
   modulePaths: ['<rootDir>'],
   moduleNameMapper: {
     '@config/(.*)': '<rootDir>/src/config/$1',
