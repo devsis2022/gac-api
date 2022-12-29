@@ -2,9 +2,10 @@ import { PrismaClient, User } from '@prisma/client'
 import { injectable } from 'inversify'
 import { LoginDTO } from 'src/dto/auth/login.dto'
 import { encryptMd5 } from 'src/util/encrypt.util'
+import { UserRepository } from './interfaces/user.repository'
 
 @injectable()
-export class UserRepository {
+export class PrismaUserRepository implements UserRepository {
   private prisma = new PrismaClient()
 
   async findByEmailOrUsername(email: string, username: string): Promise<User | null> {

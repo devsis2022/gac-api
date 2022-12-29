@@ -1,8 +1,9 @@
 import { injectable } from 'inversify'
 import { UserRole, PrismaClient, Role, Prisma } from '@prisma/client'
+import { UserRoleRepository } from './interfaces/user-role.repository'
 
 @injectable()
-export class UserRoleRepository {
+export class PrismaUserRoleRepository implements UserRoleRepository {
   private prisma = new PrismaClient()
 
   async create(
