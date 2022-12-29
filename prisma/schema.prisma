@@ -2,9 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
-  binaryTargets   = ["native", "darwin-arm64"]
-  previewFeatures = ["interactiveTransactions"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64"]
 }
 
 datasource db {
@@ -31,24 +30,32 @@ model User {
   institution      Institution[]
   studentActivity  StudentActivity[]
   course           Course[]
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
 
   @@map("users")
 }
 
 model Role {
-  id       Int        @id @default(autoincrement())
-  name     String     @unique @db.VarChar(50)
-  userRole UserRole[]
+  id        Int        @id @default(autoincrement())
+  name      String     @unique @db.VarChar(50)
+  userRole  UserRole[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
 
   @@map("roles")
 }
 
 model UserRole {
-  id     Int  @id @default(autoincrement())
-  roleId Int  @map("role_id")
-  userId Int  @map("user_id")
-  role   Role @relation(fields: [roleId], references: [id])
-  user   User @relation(fields: [userId], references: [id])
+  id            Int          @id @default(autoincrement())
+  roleId        Int          @map("role_id")
+  userId        Int          @map("user_id")
+  institutionId Int?         @map("institution_id")
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  role          Role         @relation(fields: [roleId], references: [id])
+  user          User         @relation(fields: [userId], references: [id])
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
 
   @@map("user_roles")
 }
@@ -59,6 +66,8 @@ model UserRegistration {
   registration String      @unique @db.VarChar(50)
   user         User        @relation(fields: [userId], references: [id])
   classUser    ClassUser[]
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
 
   @@map("user_registrations")
 }
@@ -77,6 +86,9 @@ model Institution {
   managerId   Int               @map("manager_id")
   manager     User              @relation(fields: [managerId], references: [id])
   course      Course[]
+  UserRole    UserRole[]
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
 
   @@map("institutions")
 }
@@ -90,6 +102,8 @@ model Course {
   coordinator   User        @relation(fields: [coordinatorId], references: [id])
   institution   Institution @relation(fields: [institutionId], references: [id])
   class         Class[]
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
 
   @@unique([name, institutionId])
   @@map("courses")
@@ -101,11 +115,13 @@ enum AnnouncementStatus {
 }
 
 model Announcement {
-  id       Int                @id @default(autoincrement())
-  name     String             @db.VarChar(255)
-  status   AnnouncementStatus
-  class    Class[]
-  activity Activity[]
+  id        Int                @id @default(autoincrement())
+  name      String             @db.VarChar(255)
+  status    AnnouncementStatus
+  class     Class[]
+  activity  Activity[]
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
 
   @@map("announcements")
 }
@@ -118,6 +134,8 @@ model Class {
   announcement   Announcement @relation(fields: [announcementId], references: [id])
   course         Course       @relation(fields: [courseId], references: [id])
   classUser      ClassUser[]
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
 
   @@map("classes")
 }
@@ -135,6 +153,8 @@ model ClassUser {
   registrationId Int              @map("registration_id")
   class          Class            @relation(fields: [classId], references: [id])
   registration   UserRegistration @relation(fields: [registrationId], references: [id])
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
 
   @@map("class_users")
 }
@@ -146,6 +166,8 @@ model Activity {
   announcementId  Int               @map("announcement_id")
   announcement    Announcement      @relation(fields: [announcementId], references: [id])
   studentActivity StudentActivity[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
 
   @@map("activities")
 }
@@ -167,6 +189,8 @@ model StudentActivity {
   activityId  Int                   @map("activity_id")
   activity    Activity              @relation(fields: [activityId], references: [id])
   student     User                  @relation(fields: [studentId], references: [id])
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @updatedAt @map("updated_at")
 
   @@map("student_activities")
 }
