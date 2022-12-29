@@ -246,7 +246,7 @@
         ],
         "parameters": [
           {
-            "description": "ID referente á instituição que irá ser ativada",
+            "description": "ID referente á instituição que irá ser atualizada",
             "name": "institutionId",
             "required": true,
             "in": "path",
@@ -303,6 +303,77 @@
                     "message": {
                       "type": "string",
                       "example": "SERVER_ERROR_ON_UPDATE_INSTITUTION"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Institutions"
+        ],
+        "parameters": [
+          {
+            "description": "ID referente á instituição que irá ser deletada",
+            "name": "institutionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "summary": "Deletar logicamente uma instituição. Ao deletar, não será possível criar novos editais, aprovar horas complementares ou criar novos registros de horas complementares. Porém, poderá ainda ser visualizado todos os registros já persistidos.",
+        "description": "Rota exclusiva para administradores e gestores",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Instituição deletada (soft-delete)"
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Usuário não é um manager da instituição em questão ou administrador",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "USER_IS_NOT_AUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Este erro acontecerá caso ocorra um erro inesperado durante a deleção",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "SERVER_ERROR_ON_DELETE_INSTITUTION"
                     }
                   }
                 }

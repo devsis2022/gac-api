@@ -27,4 +27,13 @@ export class PrismaInstitutionRepository implements InstitutionRepository {
   async update(id: number, data: Partial<Institution>): Promise<Institution> {
     return this.prisma.institution.update({ where: { id }, data })
   }
+
+  async delete(id: number): Promise<Institution> {
+    return this.prisma.institution.update({
+      where: { id },
+      data: {
+        deletedAt: new Date()
+      }
+    })
+  }
 }
