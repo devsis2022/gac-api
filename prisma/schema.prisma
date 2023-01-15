@@ -46,16 +46,23 @@ model Role {
   @@map("roles")
 }
 
+enum UserRoleStatus {
+  active
+  pending
+  rejected
+}
+
 model UserRole {
-  id            Int          @id @default(autoincrement())
-  roleId        Int          @map("role_id")
-  userId        Int          @map("user_id")
-  institutionId Int?         @map("institution_id")
-  institution   Institution? @relation(fields: [institutionId], references: [id])
-  role          Role         @relation(fields: [roleId], references: [id])
-  user          User         @relation(fields: [userId], references: [id])
-  createdAt     DateTime     @default(now()) @map("created_at")
-  updatedAt     DateTime     @updatedAt @map("updated_at")
+  id            Int            @id @default(autoincrement())
+  roleId        Int            @map("role_id")
+  userId        Int            @map("user_id")
+  institutionId Int?           @map("institution_id")
+  status        UserRoleStatus @default(active)
+  institution   Institution?   @relation(fields: [institutionId], references: [id])
+  role          Role           @relation(fields: [roleId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
 
   @@map("user_roles")
 }

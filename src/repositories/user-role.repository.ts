@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { UserRole, PrismaClient, Role, Prisma } from '@prisma/client'
+import { UserRole, PrismaClient, Role, Prisma, UserRoleStatus } from '@prisma/client'
 import { UserRoleRepository } from './interfaces/user-role.repository'
 
 @injectable()
@@ -19,7 +19,13 @@ export class PrismaUserRoleRepository implements UserRoleRepository {
     })
   }
 
-  async getByUserId(userId: number): Promise<Array<UserRole & { role: Role }>> {
-    return this.prisma.userRole.findMany({ where: { userId }, include: { role: true } })
+  async getByUserId(
+    userId: number,
+    status?: UserRoleStatus[]
+  ): Promise<Array<UserRole & { role: Role }>> {
+    return this.prisma.userRole.findMany({
+      where: { userId, ...(status && { status: { in: status } }) },
+      include: { role: true }
+    })
   }
 }
