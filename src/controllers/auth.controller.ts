@@ -8,13 +8,18 @@ import { UserMessage } from '@core/messages/user.message'
 import { PersistenceMessages } from '@core/messages/persistence.messages'
 import { LoginDTO } from 'src/dto/auth/login.dto'
 import { AuthMessage } from '@core/messages/auth.messages'
-import { sendMail } from 'src/services/email.service'
 import { createToken } from 'src/util/token.util'
 import { UserRepository, UserToken } from 'src/repositories/interfaces/user.repository'
+import { EmailToken, EmailService } from 'src/services/interfaces/email.service'
+import { Email } from 'src/dto/email/email'
+import { EmailTemplate } from '@core/enums/email-template'
 
 @injectable()
 export class AuthController {
-  constructor(@inject(UserToken) private userRepository: UserRepository) {}
+  constructor(
+    @inject(UserToken) private userRepository: UserRepository,
+    @inject(EmailToken) private emailService: EmailService
+  ) {}
 
   async signin(input: SigninDTO): Promise<ControllerResponse> {
     input.username = input.username ?? input.email.split('@')[0]
@@ -45,13 +50,16 @@ export class AuthController {
   }
 
   async recovery(req: IRequest, res: Response): Promise<any> {
-    sendMail()
-      .then((value) => {
-        console.log(value)
-        res.json({ message: 'email enviado' })
-      })
-      .catch((err) => {
-        res.json({ message: err })
-      })
+    const email: Email = {
+      recipients: ['felipe.mschultz@hotmail.com'],
+      template: EmailTemplate.RECOVERY_EMAIL,
+      params: {
+        recovery_url: 'https://google.com'
+      }
+    }
+
+    await this.emailService.sendEmail(email).then((data) => {
+      res.status(200).json({ message: 'Enviado', data })
+    })
   }
 }
