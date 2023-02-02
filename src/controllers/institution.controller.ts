@@ -2,7 +2,7 @@ import { prismaClientToken } from '@config/prisma-client'
 import { ControllerResponse } from '@core/interfaces/controller'
 import { IError } from '@core/interfaces/error'
 import { AuthMessage } from '@core/messages/auth.messages'
-import { InstitutionStatus, Prisma, PrismaClient } from '@prisma/client'
+import { InstitutionStatus, Prisma, PrismaClient, Role, UserRole } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import { Roles } from 'src/core/interfaces/roles'
 import { InstitutionMessage } from 'src/core/messages/institution.messages'
@@ -16,6 +16,7 @@ import {
   InputCreateInstitutionDTO,
   OutputCreateInstitutionDTO
 } from 'src/dto/institution/create.dto'
+import { InputDeleteInstitutionDto, OutputDeleteInstitution } from 'src/dto/institution/delete.dto'
 import { InputUpdateInstitution, OutputUpdateInstitution } from 'src/dto/institution/update.dto'
 import {
   InstitutionRepository,
@@ -99,12 +100,7 @@ export class InstitutionController {
   }: InputUpdateInstitution): Promise<ControllerResponse<OutputUpdateInstitution>> {
     try {
       const userRoles = await this.userRolesRepository.getByUserId(userId)
-      const isCurrentInstitutionManager = userRoles.find(
-        (userRole) =>
-          (userRole.role.name === Roles.MANAGER && userRole.institutionId === institutionId) ||
-          userRole.role.name === Roles.ADMIN
-      )
-      if (!isCurrentInstitutionManager) {
+      if (!this.isCurrentInstitutionManager(userRoles, institutionId)) {
         return { statusCode: 403, json: { message: AuthMessage.USER_IS_NOT_AUTHORIZED } }
       }
       await this.institutionRepository.update(institutionId, input)
@@ -113,5 +109,33 @@ export class InstitutionController {
       console.log(err)
       return { statusCode: 500, json: { message: InstitutionMessage.UPDATE_ERROR } }
     }
+  }
+
+  async delete({
+    userId,
+    institutionId
+  }: InputDeleteInstitutionDto): Promise<ControllerResponse<OutputDeleteInstitution>> {
+    try {
+      const userRoles = await this.userRolesRepository.getByUserId(userId)
+      if (!this.isCurrentInstitutionManager(userRoles, institutionId)) {
+        return { statusCode: 403, json: { message: AuthMessage.USER_IS_NOT_AUTHORIZED } }
+      }
+      await this.institutionRepository.delete(institutionId)
+      return { statusCode: 204, json: undefined }
+    } catch (err) {
+      console.log(err)
+      return { statusCode: 500, json: { message: InstitutionMessage.DELETE_ERROR } }
+    }
+  }
+
+  private isCurrentInstitutionManager(
+    userRoles: Array<UserRole & { role: Role }>,
+    institutionId: number
+  ): boolean {
+    return !!userRoles.find(
+      (userRole) =>
+        (userRole.role.name === Roles.MANAGER && userRole.institutionId === institutionId) ||
+        userRole.role.name === Roles.ADMIN
+    )
   }
 }

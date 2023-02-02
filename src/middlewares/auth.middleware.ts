@@ -2,7 +2,7 @@ import { container } from '@config/ioc/inversifyConfig'
 import { NextFunction, Request, Response } from 'express'
 import { Roles } from 'src/core/interfaces/roles'
 import { AuthMessage } from 'src/core/messages/auth.messages'
-import { UserRoleRepository } from 'src/repositories/user-role.repository'
+import { UserRoleRepository, UserRoleToken } from 'src/repositories/interfaces/user-role.repository'
 import * as tokenUtils from 'src/util/token.util'
 
 export const authMiddleware = (allowedRoles: Array<`${Roles}`>) => {
@@ -14,7 +14,7 @@ export const authMiddleware = (allowedRoles: Array<`${Roles}`>) => {
 
     if (payload === null) return res.status(401).json({ message: AuthMessage.UNAUTHORIZED })
 
-    const roleRepository = container.get(UserRoleRepository)
+    const roleRepository = container.get<UserRoleRepository>(UserRoleToken)
 
     if (allowedRoles.length !== 0) {
       const userRoles = await roleRepository.getByUserId(payload.id)
