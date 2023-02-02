@@ -26,7 +26,8 @@
     "@typescript-eslint/return-await": "off",
     "@typescript-eslint/consistent-type-assertions": "off",
     "@typescript-eslint/prefer-readonly": "off",
-    "@typescript-eslint/no-misused-promises": "off"
+    "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/method-signature-style": "off"
   },
 
   "plugins": [

@@ -10,7 +10,7 @@ const authRoutes = Router()
 
 const authenticationController = container.get(AuthController)
 
-// authentication
+// /auth
 authRoutes.post(
   '/signin',
   bodyValidator(signinSchema),
