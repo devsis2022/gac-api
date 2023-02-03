@@ -45,8 +45,7 @@ export class AuthController {
     if (!user) {
       return { statusCode: 401, json: { message: AuthMessage.INVALID_LOGIN } }
     }
-    const roles = user.userRole.map((userRole) => userRole.role.name)
-    return { statusCode: 200, json: { token: createToken({ id: user.id }), roles } }
+    return { statusCode: 200, json: { token: createToken({ id: user.id }) } }
   }
 
   async recovery(req: IRequest, res: Response): Promise<any> {

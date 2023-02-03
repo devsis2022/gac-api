@@ -2,7 +2,7 @@ import { PrismaClient, User } from '@prisma/client'
 import { injectable } from 'inversify'
 import { LoginDTO } from 'src/dto/auth/login.dto'
 import { encryptMd5 } from 'src/util/encrypt.util'
-import { UserRepository, UserWithRoles } from './interfaces/user.repository'
+import { UserRepository } from './interfaces/user.repository'
 
 @injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -17,7 +17,7 @@ export class PrismaUserRepository implements UserRepository {
     })
   }
 
-  async findByUserToLogin(dto: LoginDTO): Promise<UserWithRoles | null> {
+  async findByUserToLogin(dto: LoginDTO): Promise<User | null> {
     return await this.prisma.user.findFirst({
       where: {
         AND: [
@@ -35,13 +35,6 @@ export class PrismaUserRepository implements UserRepository {
             password: encryptMd5(dto.password)
           }
         ]
-      },
-      include: {
-        userRole: {
-          select: {
-            role: { select: { name: true } }
-          }
-        }
       }
     })
   }
