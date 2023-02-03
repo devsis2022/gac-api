@@ -1,4 +1,5 @@
 import Express, { json } from 'express'
+import cors from 'cors'
 import swagger from 'swagger-ui-express'
 import * as swaggerConfig from '../../swagger.json'
 import { authRoutes } from '@routes/auth.routes'
@@ -10,6 +11,7 @@ export class Application {
   constructor() {
     this.express = Express()
     this.express.use(json())
+    this.express.use(cors())
     this.express.use('/api-docs', swagger.serve, swagger.setup(swaggerConfig))
     this.initRoutes()
   }
