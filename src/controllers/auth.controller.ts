@@ -41,12 +41,12 @@ export class AuthController {
   }
 
   async login(input: LoginDTO): Promise<ControllerResponse> {
-    const user = await this.userRepository.findByUserAndPassword(input)
-
+    const user = await this.userRepository.findByUserToLogin(input)
     if (!user) {
       return { statusCode: 401, json: { message: AuthMessage.INVALID_LOGIN } }
     }
-    return { statusCode: 200, json: { token: createToken({ id: user.id }) } }
+    const roles = user.userRole.map((userRole) => userRole.role.name)
+    return { statusCode: 200, json: { token: createToken({ id: user.id }), roles } }
   }
 
   async recovery(req: IRequest, res: Response): Promise<any> {
