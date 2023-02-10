@@ -9,8 +9,8 @@ import { InstitutionMessage } from 'src/core/messages/institution.messages'
 import { PersistenceMessages } from 'src/core/messages/persistence.messages'
 import { RoleMessage } from 'src/core/messages/role.messages'
 import {
-  OutputApproveInstitutionDto,
-  InputApproveInstitutionDto
+  OutputAudienceInstitutionDto,
+  InputAudienceInstitutionDto
 } from 'src/dto/institution/approve.dto'
 import {
   InputCreateInstitutionDTO,
@@ -50,8 +50,8 @@ export class InstitutionController {
   }
 
   async approveRegister(
-    input: InputApproveInstitutionDto
-  ): Promise<ControllerResponse<OutputApproveInstitutionDto>> {
+    input: InputAudienceInstitutionDto
+  ): Promise<ControllerResponse<OutputAudienceInstitutionDto>> {
     let error: { statusCode: number; json: IError } | null = null
     try {
       const institution = await this.institutionRepository.findOne(Number(input.institutionId))
@@ -89,6 +89,24 @@ export class InstitutionController {
       if (error) {
         return error
       }
+      return { statusCode: 500, json: { message: InstitutionMessage.UPDATE_ERROR } }
+    }
+  }
+
+  async reproveRegister(
+    input: InputAudienceInstitutionDto
+  ): Promise<ControllerResponse<OutputAudienceInstitutionDto>> {
+    try {
+      const institution = await this.institutionRepository.findOne(Number(input.institutionId))
+      if (!institution) {
+        return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
+      }
+      if (institution.status === InstitutionStatus.active) {
+        return { statusCode: 400, json: { message: InstitutionMessage.ALREADY_ACTIVE } }
+      }
+      await this.institutionRepository.repprove(institution.id)
+      return { statusCode: 200, json: { id: institution.id } }
+    } catch (error) {
       return { statusCode: 500, json: { message: InstitutionMessage.UPDATE_ERROR } }
     }
   }

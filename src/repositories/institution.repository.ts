@@ -24,6 +24,11 @@ export class PrismaInstitutionRepository implements InstitutionRepository {
     return prisma.institution.update({ where: { id }, data: { status: 'active' } })
   }
 
+  async repprove(id: number, options?: { trx?: Prisma.TransactionClient }): Promise<Institution> {
+    const prisma = options?.trx ?? this.prisma
+    return prisma.institution.update({ where: { id }, data: { status: 'repproved' } })
+  }
+
   async update(id: number, data: Partial<Institution>): Promise<Institution> {
     return this.prisma.institution.update({ where: { id }, data })
   }

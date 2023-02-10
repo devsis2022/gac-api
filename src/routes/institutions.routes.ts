@@ -26,6 +26,12 @@ routes.put(
 )
 
 routes.put(
+  '/:institutionId/repprove',
+  authMiddleware([Roles.ADMIN]),
+  httpHandler(institutionController.approveRegister.bind(institutionController))
+)
+
+routes.put(
   '/:institutionId',
   authMiddleware([Roles.ADMIN, Roles.MANAGER]),
   bodyValidator(updateInstitutionSchema),

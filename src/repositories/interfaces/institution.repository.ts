@@ -10,6 +10,7 @@ export interface InstitutionRepository {
   ): Promise<Institution>
   findOne(id: number): Promise<Institution | null>
   activate(id: number, options?: { trx?: Prisma.TransactionClient }): Promise<Institution>
+  repprove(id: number, options?: { trx?: Prisma.TransactionClient }): Promise<Institution>
   update(id: number, data: Partial<Institution>): Promise<Institution>
   delete(id: number): Promise<Institution>
 }

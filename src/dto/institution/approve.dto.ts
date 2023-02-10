@@ -1,7 +1,7 @@
-export interface InputApproveInstitutionDto {
+export interface InputAudienceInstitutionDto {
   institutionId?: number
 }
 
-export interface OutputApproveInstitutionDto {
+export interface OutputAudienceInstitutionDto {
   id: number
 }

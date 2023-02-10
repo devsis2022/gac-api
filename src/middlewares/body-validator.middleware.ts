@@ -3,7 +3,7 @@ import Joi, { ObjectSchema } from 'joi'
 
 export const bodyValidator = (schema: ObjectSchema) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    const { error } = schema.validate(joinRequest(req), {
+    const { error, value } = schema.validate(joinRequest(req), {
       abortEarly: false,
       messages,
       stripUnknown: true
@@ -12,7 +12,7 @@ export const bodyValidator = (schema: ObjectSchema) => {
     if (error) {
       return res.status(400).json({ error: buildErrorMessages(error) })
     }
-
+    req.body = value
     next()
   }
 }

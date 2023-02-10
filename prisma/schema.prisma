@@ -75,6 +75,7 @@ model UserRegistration {
 enum InstitutionStatus {
   active
   pending
+  repproved
 }
 
 model Institution {
