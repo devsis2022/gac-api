@@ -99,8 +99,8 @@ model Course {
   name          String      @db.VarChar(255)
   description   String?
   institutionId Int         @map("institution_id")
-  coordinatorId Int         @map("coordinator_id")
-  coordinator   User        @relation(fields: [coordinatorId], references: [id])
+  coordinatorId Int?        @map("coordinator_id")
+  coordinator   User?       @relation(fields: [coordinatorId], references: [id])
   institution   Institution @relation(fields: [institutionId], references: [id])
   class         Class[]
   createdAt     DateTime    @default(now()) @map("created_at")
