@@ -28,7 +28,7 @@ routes.put(
 routes.put(
   '/:institutionId/repprove',
   authMiddleware([Roles.ADMIN]),
-  httpHandler(institutionController.approveRegister.bind(institutionController))
+  httpHandler(institutionController.reproveRegister.bind(institutionController))
 )
 
 routes.put(
@@ -42,6 +42,12 @@ routes.delete(
   '/:institutionId',
   authMiddleware([Roles.ADMIN, Roles.MANAGER]),
   httpHandler(institutionController.delete.bind(institutionController))
+)
+
+routes.get(
+  '/',
+  authMiddleware([Roles.ADMIN]),
+  httpHandler(institutionController.list.bind(institutionController))
 )
 
 export { routes }

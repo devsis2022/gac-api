@@ -36,6 +36,7 @@ export class AuthController {
 
       return { statusCode: 201, json: undefined }
     } catch (err) {
+      console.log(err)
       return { statusCode: 500, json: { message: PersistenceMessages.FAILED_TO_CREATE_ENTITY } }
     }
   }

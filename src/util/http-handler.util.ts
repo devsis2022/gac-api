@@ -7,7 +7,7 @@ export function httpHandler(controller: Controller): Handler {
       ...req.body,
       ...req.params,
       ...req.query,
-      userId: req.userId
+      ...(req.userId && { userId: req.userId })
     }
     const result = await controller(input)
     res.status(result.statusCode).json(result.json)

@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 import { Institution, Prisma, PrismaClient } from '@prisma/client'
 import { InputCreateInstitutionDTO } from 'src/dto/institution/create.dto'
-import { InstitutionRepository } from './interfaces/institution.repository'
+import { InstitutionRepository, ListOptions } from './interfaces/institution.repository'
 
 @injectable()
 export class PrismaInstitutionRepository implements InstitutionRepository {
@@ -39,6 +39,15 @@ export class PrismaInstitutionRepository implements InstitutionRepository {
       data: {
         deletedAt: new Date()
       }
+    })
+  }
+
+  async list(input: ListOptions): Promise<Institution[]> {
+    return this.prisma.institution.findMany({
+      skip: (input.page - 1) * input.count,
+      take: input.count,
+      where: { status: input.status },
+      orderBy: { updatedAt: 'desc' }
     })
   }
 }

@@ -17,6 +17,7 @@ import {
   OutputCreateInstitutionDTO
 } from 'src/dto/institution/create.dto'
 import { InputDeleteInstitutionDto, OutputDeleteInstitution } from 'src/dto/institution/delete.dto'
+import { InputListInstitutionsDto, OutputListInstitutionsDto } from 'src/dto/institution/list.dto'
 import { InputUpdateInstitution, OutputUpdateInstitution } from 'src/dto/institution/update.dto'
 import {
   InstitutionRepository,
@@ -34,13 +35,15 @@ export class InstitutionController {
     @inject(RoleToken) private roleRepository: RoleRepository
   ) {}
 
-  async requestRegister(
-    input: InputCreateInstitutionDTO
-  ): Promise<ControllerResponse<OutputCreateInstitutionDTO>> {
+  async requestRegister({
+    userId,
+    ...input
+  }: InputCreateInstitutionDTO): Promise<ControllerResponse<OutputCreateInstitutionDTO>> {
     try {
+      console.log(input)
       const institution = await this.institutionRepository.create({
         ...input,
-        managerId: Number(input.userId)
+        managerId: Number(userId)
       })
       return { statusCode: 201, json: { id: institution.id } }
     } catch (err) {
@@ -121,7 +124,7 @@ export class InstitutionController {
       if (!this.isCurrentInstitutionManager(userRoles, institutionId)) {
         return { statusCode: 403, json: { message: AuthMessage.USER_IS_NOT_AUTHORIZED } }
       }
-      await this.institutionRepository.update(institutionId, input)
+      await this.institutionRepository.update(Number(institutionId), input)
       return { statusCode: 204, json: undefined }
     } catch (err) {
       console.log(err)
@@ -143,6 +146,19 @@ export class InstitutionController {
     } catch (err) {
       console.log(err)
       return { statusCode: 500, json: { message: InstitutionMessage.DELETE_ERROR } }
+    }
+  }
+
+  async list(
+    input: InputListInstitutionsDto
+  ): Promise<ControllerResponse<OutputListInstitutionsDto>> {
+    try {
+      const { page = 1, count = 10, status = 'pending' } = input
+      const institutions = await this.institutionRepository.list({ page, count, status })
+      return { statusCode: 200, json: { page, count: institutions.length, data: institutions } }
+    } catch (err) {
+      console.log(err)
+      return { statusCode: 500, json: { message: InstitutionMessage.LIST_ERROR } }
     }
   }
 
