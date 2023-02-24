@@ -237,6 +237,40 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": [
+          "Institutions"
+        ],
+        "summary": "Listar instituições",
+        "description": "Retorna uma lista de instituições com base em seu status. O padrão é 'pending'",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "example": "active | pending | repproved"
+            },
+            "description": "Filtrar instituições por status. Se este parâmetro não for setado, o padrão é pending"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Listagem paginada. Página padrão: 1"
+          },
+          {
+            "in": "query",
+            "name": "count",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Items por página padrão: 10"
+          }
+        ]
       }
     },
     "/institution/{institutionId}": {
