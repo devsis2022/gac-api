@@ -7,6 +7,7 @@ import { Roles } from 'src/core/interfaces/roles'
 import { httpHandler } from 'src/util/http-handler.util'
 import { requestInstitutionSchema } from '@middlewares/validators/institution/request-institution.validator'
 import { updateInstitutionSchema } from '@middlewares/validators/institution/update-institution.validator'
+import { ListInstitutionSchema } from '@middlewares/validators/institution/list-institution.validator'
 
 const routes = Router()
 
@@ -46,6 +47,7 @@ routes.delete(
 
 routes.get(
   '/',
+  bodyValidator(ListInstitutionSchema),
   authMiddleware([Roles.ADMIN]),
   httpHandler(institutionController.list.bind(institutionController))
 )
