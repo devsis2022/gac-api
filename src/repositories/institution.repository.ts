@@ -1,7 +1,11 @@
 import { injectable } from 'inversify'
 import { Institution, Prisma, PrismaClient } from '@prisma/client'
 import { InputCreateInstitutionDTO } from 'src/dto/institution/create.dto'
-import { InstitutionRepository, ListOptions } from './interfaces/institution.repository'
+import {
+  InstitutionRepository,
+  InstitutionWithRelations,
+  ListOptions
+} from './interfaces/institution.repository'
 
 @injectable()
 export class PrismaInstitutionRepository implements InstitutionRepository {
@@ -15,8 +19,8 @@ export class PrismaInstitutionRepository implements InstitutionRepository {
     return prisma.institution.create({ data: input })
   }
 
-  async findOne(id: number): Promise<Institution | null> {
-    return this.prisma.institution.findUnique({ where: { id } })
+  async findOne(id: number): Promise<InstitutionWithRelations | null> {
+    return this.prisma.institution.findUnique({ where: { id }, include: { manager: true } })
   }
 
   async activate(id: number, options?: { trx?: Prisma.TransactionClient }): Promise<Institution> {

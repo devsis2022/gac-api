@@ -50,4 +50,10 @@ routes.get(
   httpHandler(institutionController.list.bind(institutionController))
 )
 
+routes.get(
+  '/:institutionId',
+  authMiddleware([Roles.ADMIN]),
+  httpHandler(institutionController.getById.bind(institutionController))
+)
+
 export { routes }

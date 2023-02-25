@@ -17,6 +17,10 @@ import {
   OutputCreateInstitutionDTO
 } from 'src/dto/institution/create.dto'
 import { InputDeleteInstitutionDto, OutputDeleteInstitution } from 'src/dto/institution/delete.dto'
+import {
+  InputGetInstitutionByIdDto,
+  OutputGetInstitutionByIdDto
+} from 'src/dto/institution/get-by-id.dto'
 import { InputListInstitutionsDto, OutputListInstitutionsDto } from 'src/dto/institution/list.dto'
 import { InputUpdateInstitution, OutputUpdateInstitution } from 'src/dto/institution/update.dto'
 import {
@@ -159,6 +163,21 @@ export class InstitutionController {
     } catch (err) {
       console.log(err)
       return { statusCode: 500, json: { message: InstitutionMessage.LIST_ERROR } }
+    }
+  }
+
+  async getById(
+    input: InputGetInstitutionByIdDto
+  ): Promise<ControllerResponse<OutputGetInstitutionByIdDto>> {
+    try {
+      const institution = await this.institutionRepository.findOne(Number(input.institutionId), {
+        relations: true
+      })
+      if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
+      return { statusCode: 200, json: institution }
+    } catch (err) {
+      console.log(err)
+      return { statusCode: 500, json: { message: InstitutionMessage.GET_ERROR } }
     }
   }
 
