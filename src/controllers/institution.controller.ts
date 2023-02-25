@@ -125,7 +125,7 @@ export class InstitutionController {
   }: InputUpdateInstitution): Promise<ControllerResponse<OutputUpdateInstitution>> {
     try {
       const userRoles = await this.userRolesRepository.getByUserId(userId)
-      if (!this.isCurrentInstitutionManager(userRoles, institutionId)) {
+      if (!this.isCurrentInstitutionManager(userRoles, Number(institutionId))) {
         return { statusCode: 403, json: { message: AuthMessage.USER_IS_NOT_AUTHORIZED } }
       }
       await this.institutionRepository.update(Number(institutionId), input)
@@ -141,11 +141,11 @@ export class InstitutionController {
     institutionId
   }: InputDeleteInstitutionDto): Promise<ControllerResponse<OutputDeleteInstitution>> {
     try {
-      const userRoles = await this.userRolesRepository.getByUserId(userId)
-      if (!this.isCurrentInstitutionManager(userRoles, institutionId)) {
+      const userRoles = await this.userRolesRepository.getByUserId(Number(userId))
+      if (!this.isCurrentInstitutionManager(userRoles, Number(institutionId))) {
         return { statusCode: 403, json: { message: AuthMessage.USER_IS_NOT_AUTHORIZED } }
       }
-      await this.institutionRepository.delete(institutionId)
+      await this.institutionRepository.delete(Number(institutionId))
       return { statusCode: 204, json: undefined }
     } catch (err) {
       console.log(err)
@@ -174,6 +174,7 @@ export class InstitutionController {
         relations: true
       })
       if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
+      Reflect.deleteProperty(institution.manager, 'password')
       return { statusCode: 200, json: institution }
     } catch (err) {
       console.log(err)

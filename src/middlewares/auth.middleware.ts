@@ -26,7 +26,7 @@ export const authMiddleware = (allowedRoles: Array<`${Roles}`>) => {
 
       if (!isAllowed) return res.status(401).json({ message: AuthMessage.UNAUTHORIZED })
     }
-    req.userId = String(payload.id)
+    req.userId = Number(payload.id)
     next()
   }
 }

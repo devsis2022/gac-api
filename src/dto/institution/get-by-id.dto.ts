@@ -11,5 +11,5 @@ export interface OutputGetInstitutionByIdDto {
   nickname: string | null
   description: string | null
   managerId: number
-  manager: User
+  manager: Omit<User, 'password'>
 }

@@ -270,17 +270,84 @@
             },
             "description": "Items por página padrão: 10"
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "count": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "IFSUL - Instituto Federal de Tecnologia e Ciências sul-riograndense"
+                          },
+                          "nickname": {
+                            "type": "string",
+                            "example": "ifsul"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "Escola técnica e universidade de tecnologia, formando os melhores profissionais de TI do mercado gaúcho"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "active"
+                          },
+                          "managerId": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2023-02-25T22:35:16.978Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2023-02-25T22:35:16.978Z"
+                          },
+                          "deletedAt": {
+                            "type": "string",
+                            "example": null
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/institution/{institutionId}": {
-      "put": {
+      "get": {
         "tags": [
           "Institutions"
         ],
+        "summary": "Detalhar instituição",
+        "description": "Detalhes da instituição",
         "parameters": [
           {
-            "description": "ID referente á instituição que irá ser atualizada",
+            "description": "ID referente á instituição",
             "name": "institutionId",
             "required": true,
             "in": "path",
@@ -290,53 +357,81 @@
             }
           }
         ],
-        "summary": "Atualizar informações sobre a instituição",
-        "description": "Rota exclusiva para administradores e gestores",
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
         "responses": {
-          "204": {
-            "description": "Instituição atualizada"
-          },
-          "401": {
-            "description": "Usuário não autorizado",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnauthorizedUser"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Usuário não é um manager da instituição em questão ou administrador",
+          "200": {
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {
+                    "id": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "name": {
                       "type": "string",
-                      "example": "USER_IS_NOT_AUTHORIZED"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Este erro acontecerá caso ocorra um erro inesperado durante a atualização",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
+                      "example": "IFSUL - Instituto Federal de Tecnologia e Ciências sul-riograndense"
+                    },
+                    "nickname": {
                       "type": "string",
-                      "example": "SERVER_ERROR_ON_UPDATE_INSTITUTION"
+                      "example": "ifsul"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Escola técnica e universidade de tecnologia, formando os melhores profissionais de TI do mercado gaúcho"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "active"
+                    },
+                    "managerId": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2023-02-25T22:35:16.978Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "example": "2023-02-25T22:35:16.978Z"
+                    },
+                    "deletedAt": {
+                      "type": "string",
+                      "example": null
+                    },
+                    "manager": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Administrador"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "admin"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "admin@mail.com"
+                        },
+                        "cpf": {
+                          "type": "string",
+                          "example": "46508503049"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-02-25T22:35:16.978Z"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2023-02-25T22:35:16.978Z"
+                        }
+                      }
                     }
                   }
                 }
@@ -416,15 +511,13 @@
           }
         }
       },
-      "get": {
+      "put": {
         "tags": [
           "Institutions"
         ],
-        "summary": "Detalhar instituição",
-        "description": "Detalhes da instituição",
         "parameters": [
           {
-            "description": "ID referente á instituição",
+            "description": "ID referente á instituição que irá ser atualizada",
             "name": "institutionId",
             "required": true,
             "in": "path",
@@ -433,7 +526,61 @@
               "example": 1
             }
           }
-        ]
+        ],
+        "summary": "Atualizar informações sobre a instituição",
+        "description": "Rota exclusiva para administradores e gestores",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Instituição atualizada"
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Usuário não é um manager da instituição em questão ou administrador",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "USER_IS_NOT_AUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Este erro acontecerá caso ocorra um erro inesperado durante a atualização",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "SERVER_ERROR_ON_UPDATE_INSTITUTION"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/institution/{institutionId}/activate": {
