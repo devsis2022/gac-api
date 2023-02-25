@@ -652,6 +652,76 @@
           }
         }
       }
+    },
+    "/institution/{institutionId}/repprove": {
+      "put": {
+        "tags": [
+          "Institutions"
+        ],
+        "parameters": [
+          {
+            "description": "ID referente á instituição que irá ser reprovada",
+            "name": "institutionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "summary": "Reprovar instituição",
+        "description": "Rota exclusiva para administradores",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Instituição reprovada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedUser"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Este erro acontecerá caso ocorra um erro inesperado durante a reprovação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "SERVER_ERROR_ON_UPDATE_INSTITUTION"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
