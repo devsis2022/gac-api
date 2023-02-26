@@ -7,6 +7,7 @@ import { Roles } from '@core/interfaces/roles'
 import { bodyValidator } from '@middlewares/body-validator.middleware'
 import { createCourseSchema } from '@middlewares/validators/course/create.validator'
 import { ListCoursesSchema } from '@middlewares/validators/course/list.validator'
+import { UpdateCourseSchema } from '@middlewares/validators/course/update.validator'
 
 const courseRoutes = Router()
 
@@ -24,6 +25,13 @@ courseRoutes.get(
   authMiddleware([Roles.ADMIN, Roles.MANAGER]),
   bodyValidator(ListCoursesSchema),
   httpHandler(courseController.list.bind(courseController))
+)
+
+courseRoutes.put(
+  '/:institutionId/courses/:courseId',
+  authMiddleware([Roles.MANAGER]),
+  bodyValidator(UpdateCourseSchema),
+  httpHandler(courseController.update.bind(courseController))
 )
 
 export { courseRoutes }

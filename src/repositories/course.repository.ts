@@ -38,4 +38,24 @@ export class PrismaCourseRepository implements CourseRepository {
       orderBy: { name: 'asc' }
     })
   }
+
+  async update(
+    where: { courseId: number },
+    data: Partial<Pick<Course, 'name' | 'description' | 'coordinatorId'>>,
+    options?: { trx?: Prisma.TransactionClient | undefined } | undefined
+  ): Promise<Course> {
+    const prisma = options?.trx ?? this.prisma
+    return prisma.course.update({
+      where: { id: where.courseId },
+      data
+    })
+  }
+
+  async findOne(input: { courseId: number; institutionId: number }): Promise<Course | null> {
+    return this.prisma.course.findFirst({
+      where: {
+        AND: [{ id: input.courseId }, { institutionId: input.institutionId }]
+      }
+    })
+  }
 }

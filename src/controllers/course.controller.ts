@@ -98,6 +98,7 @@ export class CourseController {
 
   async update(input: InputUpdateCourseDTO): Promise<ControllerResponse<OutputUpdateCourseDTO>> {
     try {
+      console.log({ input })
       const institution = await this.institutionRepository.findOne(Number(input.institutionId))
       if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
       if (institution.managerId !== input.userId)
@@ -106,16 +107,16 @@ export class CourseController {
         courseId: Number(input.courseId),
         institutionId: Number(input.institutionId)
       })
+      if (!course) return { statusCode: 404, json: { message: CourseMessage.NOT_FOUND } }
       if (input.coordinatorId) {
         const coordinator = await this.userRepository.findById(input.coordinatorId)
         if (!coordinator) return { statusCode: 404, json: { message: UserMessage.USER_NOT_FOUND } }
         const coordinatorRole = await this.roleRepository.getByName(Roles.COORDINATOR)
         if (!coordinatorRole) return { statusCode: 404, json: { message: RoleMessage.NOT_FOUND } }
-        if (!course) return { statusCode: 404, json: { message: CourseMessage.NOT_FOUND } }
         if (input.coordinatorId) {
           await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             await this.courseRepository.update(
-              { courseId: course.id, institutionId: course.institutionId },
+              { courseId: course.id },
               {
                 ...(input.name && { name: input.name }),
                 coordinatorId: input.coordinatorId,
@@ -147,17 +148,16 @@ export class CourseController {
           })
           return { statusCode: 204, json: { id: course.id } }
         }
-        await this.courseRepository.update(
-          {
-            courseId: course.id,
-            institutionId: course.institutionId
-          },
-          {
-            ...(input.name && { name: input.name }),
-            ...(input.description && { description: input.description })
-          }
-        )
       }
+      await this.courseRepository.update(
+        {
+          courseId: course.id
+        },
+        {
+          ...(input.name && { name: input.name }),
+          ...(input.description && { description: input.description })
+        }
+      )
       return { statusCode: 204, json: { id: course.id } }
     } catch (err) {
       console.log(err)
