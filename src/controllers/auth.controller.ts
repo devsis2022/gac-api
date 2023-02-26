@@ -13,6 +13,9 @@ import { UserRepository, UserToken } from 'src/repositories/interfaces/user.repo
 import { EmailToken, EmailService } from 'src/services/interfaces/email.service'
 import { Email } from 'src/dto/email/email'
 import { EmailTemplate } from '@core/enums/email-template'
+import { RequestRecoveryDTO } from 'src/dto/auth/request-recovery'
+import { ValidateRecoveryDTO } from 'src/dto/auth/validate-recovery'
+import { ChangePasswordDTO } from 'src/dto/auth/change-password'
 
 @injectable()
 export class AuthController {
@@ -47,6 +50,26 @@ export class AuthController {
       return { statusCode: 401, json: { message: AuthMessage.INVALID_LOGIN } }
     }
     return { statusCode: 200, json: { token: createToken({ id: user.id }) } }
+  }
+
+  async requestRecovery(input: RequestRecoveryDTO): Promise<ControllerResponse> {
+    const { email } = input
+
+    const user = await this.userRepository.findByEmail(email)
+
+    if (!user) {
+      return { statusCode: 422, json: { message: UserMessage.USER_NOT_FOUND } }
+    }
+
+    return { statusCode: 200, json: { msg: user } }
+  }
+
+  async validateCode(input: ValidateRecoveryDTO): Promise<ControllerResponse> {
+    return { statusCode: 200, json: { msg: 'validateCode' } }
+  }
+
+  async changePassword(input: ChangePasswordDTO): Promise<ControllerResponse> {
+    return { statusCode: 200, json: { msg: 'changePassword' } }
   }
 
   async recovery(req: IRequest, res: Response): Promise<any> {
