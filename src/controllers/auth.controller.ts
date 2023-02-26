@@ -37,8 +37,9 @@ export class AuthController {
 
     const { email, username } = input
 
-    const users = await this.userRepository.findByEmailOrUsername(email, username)
-    if (users) {
+    const user = await this.userRepository.findByEmailOrUsername(email, username)
+
+    if (user) {
       return { statusCode: 422, json: { message: UserMessage.USER_ALREADY_REGISTERED } }
     }
 
@@ -47,7 +48,6 @@ export class AuthController {
 
       return { statusCode: 201, json: undefined }
     } catch (err) {
-      console.log(err)
       return { statusCode: 500, json: { message: PersistenceMessages.FAILED_TO_CREATE_ENTITY } }
     }
   }

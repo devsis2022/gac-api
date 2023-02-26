@@ -11,8 +11,14 @@ export class PrismaUserRepository implements UserRepository {
   async findByEmailOrUsername(email: string, username: string): Promise<User | null> {
     return await this.prisma.user.findFirst({
       where: {
-        email,
-        username
+        OR: [
+          {
+            email
+          },
+          {
+            username
+          }
+        ]
       }
     })
   }
