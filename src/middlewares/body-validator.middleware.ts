@@ -3,7 +3,6 @@ import Joi, { ObjectSchema } from 'joi'
 
 export const bodyValidator = (schema: ObjectSchema) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    console.log(joinRequest(req))
     const { error, value } = schema.validate(joinRequest(req), {
       abortEarly: false,
       messages,
