@@ -537,6 +537,29 @@
         ],
         "summary": "Atualizar informações sobre a instituição",
         "description": "Rota exclusiva para administradores e gestores",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "IFSUL - Instituto Federal de Tecnologia e Ciências sul-riograndense"
+                  },
+                  "nickname": {
+                    "type": "string",
+                    "example": "ifsul"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Escola técnica e universidade de tecnologia, formando os melhores profissionais de TI do mercado gaúcho"
+                  }
+                }
+              }
+            }
+          }
+        },
         "security": [
           {
             "bearer": []
@@ -1030,6 +1053,96 @@
                           ]
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institution/{institutionId}/courses/{courseId}": {
+      "put": {
+        "tags": [
+          "Courses"
+        ],
+        "parameters": [
+          {
+            "description": "ID referente á instituição que contém o curso",
+            "name": "institutionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "description": "ID do curso",
+            "name": "courseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "summary": "Atualizar informações sobre o curso",
+        "description": "Rota exclusiva para gestores",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "TADS"
+                  },
+                  "coordinatorId": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "É um cursinho aí..."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Curso atualizado"
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Usuário não é um manager da instituição em questão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "USER_IS_NOT_AUTHORIZED"
                     }
                   }
                 }
