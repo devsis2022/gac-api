@@ -8,4 +8,9 @@ export interface UserRoleRepository {
     options?: { trx: Prisma.TransactionClient }
   ): Promise<UserRole>
   getByUserId(userId: number): Promise<Array<UserRole & { role: Role }>>
+  isStillCoordinator(input: { userId: number; institutionId: number }): Promise<boolean>
+  delete(
+    input: { userId: number; institutionId: number },
+    options?: { trx: Prisma.TransactionClient }
+  ): Promise<void>
 }

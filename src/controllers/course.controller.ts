@@ -10,6 +10,7 @@ import { Prisma, PrismaClient } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import { InputCreateCourseDTO, OutputCreateCourseDTO } from 'src/dto/course/create.dto'
 import { InputListCoursesDTO, OutputListCoursesDTO } from 'src/dto/course/list.dto'
+import { InputUpdateCourseDTO, OutputUpdateCourseDTO } from 'src/dto/course/update.dto'
 import { CourseRepository, CourseToken } from 'src/repositories/interfaces/course.repository'
 import {
   InstitutionRepository,
@@ -92,6 +93,75 @@ export class CourseController {
     } catch (err) {
       console.log(err)
       return { statusCode: 500, json: { message: CourseMessage.LIST_ERROR } }
+    }
+  }
+
+  async update(input: InputUpdateCourseDTO): Promise<ControllerResponse<OutputUpdateCourseDTO>> {
+    try {
+      const institution = await this.institutionRepository.findOne(Number(input.institutionId))
+      if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
+      if (institution.managerId !== input.userId)
+        return { statusCode: 401, json: { message: AuthMessage.UNAUTHORIZED } }
+      const course = await this.courseRepository.findOne({
+        courseId: Number(input.courseId),
+        institutionId: Number(input.institutionId)
+      })
+      if (input.coordinatorId) {
+        const coordinator = await this.userRepository.findById(input.coordinatorId)
+        if (!coordinator) return { statusCode: 404, json: { message: UserMessage.USER_NOT_FOUND } }
+        const coordinatorRole = await this.roleRepository.getByName(Roles.COORDINATOR)
+        if (!coordinatorRole) return { statusCode: 404, json: { message: RoleMessage.NOT_FOUND } }
+        if (!course) return { statusCode: 404, json: { message: CourseMessage.NOT_FOUND } }
+        if (input.coordinatorId) {
+          await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+            await this.courseRepository.update(
+              { courseId: course.id, institutionId: course.institutionId },
+              {
+                ...(input.name && { name: input.name }),
+                coordinatorId: input.coordinatorId,
+                ...(input.description && { description: input.description })
+              },
+              { trx: tx }
+            )
+            await this.userRoleRepository.create(
+              {
+                userId: Number(input.coordinatorId),
+                institutionId: institution.id,
+                roleId: coordinatorRole.id
+              },
+              { trx: tx }
+            )
+            const isStillCoordinator = await this.userRoleRepository.isStillCoordinator({
+              userId: Number(course.coordinatorId),
+              institutionId: Number(course.institutionId)
+            })
+            if (!isStillCoordinator) {
+              await this.userRoleRepository.delete(
+                {
+                  userId: Number(course.coordinatorId),
+                  institutionId: Number(course.institutionId)
+                },
+                { trx: tx }
+              )
+            }
+          })
+          return { statusCode: 204, json: { id: course.id } }
+        }
+        await this.courseRepository.update(
+          {
+            courseId: course.id,
+            institutionId: course.institutionId
+          },
+          {
+            ...(input.name && { name: input.name }),
+            ...(input.description && { description: input.description })
+          }
+        )
+      }
+      return { statusCode: 204, json: { id: course.id } }
+    } catch (err) {
+      console.log(err)
+      return { statusCode: 500, json: { message: CourseMessage.CREATE_ERROR } }
     }
   }
 }

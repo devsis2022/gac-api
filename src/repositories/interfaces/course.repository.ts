@@ -15,6 +15,12 @@ export interface CourseRepository {
     institutionId: number
     search?: string
   }): Promise<Course[]>
+  update(
+    where: { institutionId: number; courseId: number },
+    data: Partial<Pick<Course, 'name' | 'description' | 'coordinatorId'>>,
+    options?: { trx?: Prisma.TransactionClient }
+  ): Promise<Course>
+  findOne(input: { courseId: number; institutionId: number }): Promise<Course>
 }
 
 export type CourseWithRelations = Course & {
