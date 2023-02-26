@@ -1,6 +1,6 @@
 import { injectable, inject } from 'inversify'
 import { Response } from 'express'
-import { User } from '@prisma/client'
+import { Prisma, PrismaClient, User } from '@prisma/client'
 import { IRequest } from 'src/core/interfaces/request'
 import { SigninDTO } from 'src/dto/auth/signin.dto'
 import { ControllerResponse } from '@core/interfaces/controller'
@@ -13,11 +13,22 @@ import { UserRepository, UserToken } from 'src/repositories/interfaces/user.repo
 import { EmailToken, EmailService } from 'src/services/interfaces/email.service'
 import { Email } from 'src/dto/email/email'
 import { EmailTemplate } from '@core/enums/email-template'
+import { RequestRecoveryDTO } from 'src/dto/auth/request-recovery'
+import { ValidateRecoveryDTO } from 'src/dto/auth/validate-recovery'
+import { ChangePasswordDTO } from 'src/dto/auth/change-password'
+import { prismaClientToken } from '@config/prisma-client'
+import {
+  UserRecoveryRepository,
+  UserRecoveryToken
+} from 'src/repositories/interfaces/user-recovery.recovery'
+import { hasPassedHours } from 'src/util/date.util'
 
 @injectable()
 export class AuthController {
   constructor(
+    @inject(prismaClientToken) private prisma: PrismaClient,
     @inject(UserToken) private userRepository: UserRepository,
+    @inject(UserRecoveryToken) private userRecoveryRepository: UserRecoveryRepository,
     @inject(EmailToken) private emailService: EmailService
   ) {}
 
@@ -49,17 +60,63 @@ export class AuthController {
     return { statusCode: 200, json: { token: createToken({ id: user.id }) } }
   }
 
-  async recovery(req: IRequest, res: Response): Promise<any> {
+  async requestRecovery(input: RequestRecoveryDTO): Promise<ControllerResponse> {
+    const user = await this.userRepository.findByEmail(input.email)
+
+    if (!user) {
+      return { statusCode: 422, json: { message: UserMessage.USER_NOT_FOUND } }
+    }
+
+    const recoveryCode = Math.floor(100000 + Math.random() * 900000)
+
+    const recovery = await this.userRecoveryRepository.findByUserId(user.id)
+
+    if (!recovery) {
+      await this.userRecoveryRepository.create({ userId: user.id, recoveryCode })
+    } else {
+      await this.userRecoveryRepository.update(user.id, { recoveryCode, createdAt: new Date() })
+    }
+
     const email: Email = {
-      recipients: ['felipe.mschultz@hotmail.com'],
+      recipients: [user.email],
       template: EmailTemplate.RECOVERY_EMAIL,
       params: {
-        recovery_url: 'https://google.com'
+        user_name: user.name,
+        recovery_code: recoveryCode.toString()
       }
     }
 
-    await this.emailService.sendEmail(email).then((data) => {
-      res.status(200).json({ message: 'Enviado', data })
+    await this.emailService.sendEmail(email)
+
+    return { statusCode: 200, json: undefined }
+  }
+
+  async validateCode(input: ValidateRecoveryDTO): Promise<ControllerResponse> {
+    const { email, recoveryCode } = input
+
+    const recovery = await this.userRecoveryRepository.findByUserEmailAndCode(email, recoveryCode)
+
+    if (!recovery || hasPassedHours(recovery.createdAt, 2)) {
+      return { statusCode: 200, json: { valid: false } }
+    }
+
+    return { statusCode: 200, json: { valid: true } }
+  }
+
+  async changePassword(input: ChangePasswordDTO): Promise<ControllerResponse> {
+    const { email, recoveryCode, password } = input
+
+    const recovery = await this.userRecoveryRepository.findByUserEmailAndCode(email, recoveryCode)
+
+    if (!recovery || hasPassedHours(recovery.createdAt, 2)) {
+      return { statusCode: 501, json: { msg: AuthMessage.UNABLE_TO_RECOVERY_PASSWORD } }
+    }
+
+    await this.prisma.$transaction(async (trx: Prisma.TransactionClient) => {
+      await this.userRepository.updatePassword(recovery.userId, password, { trx })
+      await this.userRecoveryRepository.deleteByUserId(recovery.userId, { trx })
     })
+
+    return { statusCode: 200, json: undefined }
   }
 }

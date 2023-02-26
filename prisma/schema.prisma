@@ -30,10 +30,20 @@ model User {
   institution      Institution[]
   studentActivity  StudentActivity[]
   course           Course[]
+  recovery         Recovery?
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model Recovery {
+  userId       Int      @unique @map("user_id")
+  recoveryCode Int      @map("recovery_code")
+  createdAt    DateTime @default(now()) @map("created_at")
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@map("recoveries")
 }
 
 model Role {
@@ -61,12 +71,12 @@ model UserRole {
 }
 
 model UserRegistration {
-  id           Int        @id @default(autoincrement())
-  userId       Int        @map("user_id")
-  user         User       @relation(fields: [userId], references: [id])
-  classUser    ClassUser?
-  createdAt    DateTime   @default(now()) @map("created_at")
-  updatedAt    DateTime   @updatedAt @map("updated_at")
+  id        Int        @id @default(autoincrement())
+  userId    Int        @map("user_id")
+  user      User       @relation(fields: [userId], references: [id])
+  classUser ClassUser?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
 
   @@map("user_registrations")
 }
