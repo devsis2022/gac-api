@@ -54,4 +54,8 @@ export class PrismaInstitutionRepository implements InstitutionRepository {
       orderBy: { updatedAt: 'desc' }
     })
   }
+
+  async findManyByManagerId(managerId: number): Promise<Institution[]> {
+    return this.prisma.institution.findMany({ where: { managerId } })
+  }
 }

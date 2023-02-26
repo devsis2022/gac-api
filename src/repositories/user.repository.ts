@@ -1,8 +1,8 @@
-import { PrismaClient, User } from '@prisma/client'
+import { Institution, PrismaClient, Role, User, UserRole } from '@prisma/client'
 import { injectable } from 'inversify'
 import { LoginDTO } from 'src/dto/auth/login.dto'
 import { encryptMd5 } from 'src/util/encrypt.util'
-import { UserRepository } from './interfaces/user.repository'
+import { UserRepository, UserWithRelations } from './interfaces/user.repository'
 
 @injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -44,6 +44,13 @@ export class PrismaUserRepository implements UserRepository {
 
     return await this.prisma.user.create({
       data: user
+    })
+  }
+
+  async findById(userId: number): Promise<UserWithRelations> {
+    return this.prisma.user.findFirst({
+      where: { id: userId },
+      include: { userRole: { include: { institution: true, role: true } } }
     })
   }
 }

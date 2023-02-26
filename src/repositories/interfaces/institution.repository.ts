@@ -14,6 +14,7 @@ export interface InstitutionRepository {
   update(id: number, data: Partial<Institution>): Promise<Institution>
   delete(id: number): Promise<Institution>
   list(input: ListOptions): Promise<Institution[]>
+  findManyByManagerId(managerId: number): Promise<Institution[]>
 }
 
 export interface ListOptions {

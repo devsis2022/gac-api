@@ -1,5 +1,5 @@
 import { injectable } from 'inversify'
-import { UserRole, PrismaClient, Role, Prisma } from '@prisma/client'
+import { PrismaClient, Role } from '@prisma/client'
 import { Roles } from 'src/core/interfaces/roles'
 import { RoleRepository } from './interfaces/role.respository'
 

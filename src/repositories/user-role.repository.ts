@@ -7,14 +7,15 @@ export class PrismaUserRoleRepository implements UserRoleRepository {
   private prisma = new PrismaClient()
 
   async create(
-    input: { userId: number; roleId: number },
+    input: { userId: number; roleId: number; institutionId: number },
     options?: { trx: Prisma.TransactionClient }
   ): Promise<UserRole> {
     const prisma = options?.trx ?? this.prisma
     return prisma.userRole.create({
       data: {
         roleId: input.roleId,
-        userId: input.userId
+        userId: input.userId,
+        ...(input.institutionId && { institutionId: input.institutionId })
       }
     })
   }

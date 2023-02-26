@@ -61,13 +61,12 @@ model UserRole {
 }
 
 model UserRegistration {
-  id           Int         @id @default(autoincrement())
-  userId       Int         @map("user_id")
-  registration String      @unique @db.VarChar(50)
-  user         User        @relation(fields: [userId], references: [id])
-  classUser    ClassUser[]
-  createdAt    DateTime    @default(now()) @map("created_at")
-  updatedAt    DateTime    @updatedAt @map("updated_at")
+  id           Int        @id @default(autoincrement())
+  userId       Int        @map("user_id")
+  user         User       @relation(fields: [userId], references: [id])
+  classUser    ClassUser?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
 
   @@map("user_registrations")
 }
@@ -152,7 +151,7 @@ model ClassUser {
   id             Int              @id @default(autoincrement())
   status         ClassUserStatus
   classId        Int              @map("class_id")
-  registrationId Int              @map("registration_id")
+  registrationId Int              @unique @map("registration_id")
   class          Class            @relation(fields: [classId], references: [id])
   registration   UserRegistration @relation(fields: [registrationId], references: [id])
   createdAt      DateTime         @default(now()) @map("created_at")
