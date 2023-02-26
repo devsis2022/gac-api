@@ -9,6 +9,12 @@ export interface CourseRepository {
     input: Omit<InputCreateCourseDTO, 'userId'>,
     options?: { trx?: Prisma.TransactionClient }
   ): Promise<Course>
+  list(input: {
+    page: number
+    count: number
+    institutionId: number
+    search?: string
+  }): Promise<Course[]>
 }
 
 export type CourseWithRelations = Course & {

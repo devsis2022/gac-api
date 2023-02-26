@@ -9,6 +9,7 @@ import { UserMessage } from '@core/messages/user.message'
 import { Prisma, PrismaClient } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import { InputCreateCourseDTO, OutputCreateCourseDTO } from 'src/dto/course/create.dto'
+import { InputListCoursesDTO, OutputListCoursesDTO } from 'src/dto/course/list.dto'
 import { CourseRepository, CourseToken } from 'src/repositories/interfaces/course.repository'
 import {
   InstitutionRepository,
@@ -62,6 +63,35 @@ export class CourseController {
     } catch (err) {
       console.log(err)
       return { statusCode: 500, json: { message: CourseMessage.CREATE_ERROR } }
+    }
+  }
+
+  async list(input: InputListCoursesDTO): Promise<ControllerResponse<OutputListCoursesDTO>> {
+    try {
+      console.log(input)
+      const page = input?.page ? Number(input.page) : 1
+      const count = input?.count ? Number(input?.count) : 10
+      const institution = await this.institutionRepository.findOne(Number(input.institutionId), {
+        relations: true
+      })
+      if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
+      const userRoles = await this.userRoleRepository.getByUserId(input.userId)
+      if (
+        !userRoles.find((userRole) => userRole.role.name === Roles.ADMIN) &&
+        institution.managerId !== input.userId
+      ) {
+        return { statusCode: 401, json: { message: AuthMessage.UNAUTHORIZED } }
+      }
+      const courses = await this.courseRepository.list({
+        page,
+        count,
+        institutionId: institution.id,
+        ...(input.search && { search: input.search })
+      })
+      return { statusCode: 200, json: { page, count, data: courses } }
+    } catch (err) {
+      console.log(err)
+      return { statusCode: 500, json: { message: CourseMessage.LIST_ERROR } }
     }
   }
 }

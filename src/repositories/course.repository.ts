@@ -18,4 +18,24 @@ export class PrismaCourseRepository implements CourseRepository {
     const prisma = options?.trx ?? this.prisma
     return prisma.course.create({ data: input })
   }
+
+  async list(input: {
+    page: number
+    count: number
+    institutionId: number
+    search?: string
+  }): Promise<Course[]> {
+    const search = input.search ?? ''
+    return this.prisma.course.findMany({
+      where: {
+        AND: [
+          { institutionId: input.institutionId },
+          { name: { startsWith: search, mode: 'insensitive' } }
+        ]
+      },
+      take: input.count,
+      skip: (input.page - 1) * input.count,
+      orderBy: { name: 'asc' }
+    })
+  }
 }

@@ -72,7 +72,9 @@ export class UserController {
             institutionId: registration.classUser?.class.course.institutionId,
             institutionName: registration.classUser?.class.course.institution.name,
             institutionNickname: registration.classUser?.class.course.institution.nickname,
-            registrationId: registration.id
+            registrationId: registration.id,
+            courseId: registration.classUser?.class.course.id,
+            courseName: registration.classUser?.class.course.name
           })
         })
       }
