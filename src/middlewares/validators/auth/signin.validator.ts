@@ -1,4 +1,4 @@
-import joi, { CustomHelpers, CustomValidator } from 'joi'
+import joi, { allow, CustomHelpers, CustomValidator } from 'joi'
 import { cpf } from 'cpf-cnpj-validator'
 import { SigninDTO } from 'src/dto/auth/signin.dto'
 
@@ -12,7 +12,7 @@ const cpfValidator: CustomValidator = (value: string, helpers: CustomHelpers) =>
 
 export const signinSchema = joi.object<SigninDTO>({
   name: joi.string().required(),
-  username: joi.string(),
+  username: joi.string().allow(null, ''),
   email: joi.string().email().required(),
   password: joi.string().min(6).required(),
   cpf: joi.string().custom(cpfValidator).required()
