@@ -1,3 +1,3 @@
 export enum EmailTemplate {
-  RECOVERY_EMAIL = 'd-4c0ace2d7a674fed99ba42e5ffa227a4'
+  RECOVERY_EMAIL = 'd-1231eca3ae8e40aaa7f942496bf2b8d9'
 }

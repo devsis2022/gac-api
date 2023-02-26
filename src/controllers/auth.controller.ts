@@ -61,7 +61,9 @@ export class AuthController {
       return { statusCode: 422, json: { message: UserMessage.USER_NOT_FOUND } }
     }
 
-    return { statusCode: 200, json: { msg: user } }
+    const recoveryCode = Math.floor(100000 + Math.random() * 900000)
+
+    return { statusCode: 200, json: { msg: recoveryCode } }
   }
 
   async validateCode(input: ValidateRecoveryDTO): Promise<ControllerResponse> {
