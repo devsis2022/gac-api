@@ -174,6 +174,13 @@ export class InstitutionController {
         relations: true
       })
       if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
+      const userRoles = await this.userRolesRepository.getByUserId(input.userId)
+      if (
+        !userRoles.find((userRole) => userRole.role.name === Roles.ADMIN) &&
+        institution.managerId !== input.userId
+      ) {
+        return { statusCode: 401, json: { message: AuthMessage.UNAUTHORIZED } }
+      }
       Reflect.deleteProperty(institution.manager, 'password')
       return { statusCode: 200, json: institution }
     } catch (err) {

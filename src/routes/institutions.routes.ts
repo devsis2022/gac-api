@@ -54,7 +54,7 @@ routes.get(
 
 routes.get(
   '/:institutionId',
-  authMiddleware([Roles.ADMIN]),
+  authMiddleware([Roles.ADMIN, Roles.MANAGER]),
   httpHandler(institutionController.getById.bind(institutionController))
 )
 

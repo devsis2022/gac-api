@@ -344,7 +344,7 @@
           "Institutions"
         ],
         "summary": "Detalhar instituição",
-        "description": "Detalhes da instituição",
+        "description": "Rota exclusiva para administradores e para o gestor da instituição",
         "parameters": [
           {
             "description": "ID referente á instituição",
