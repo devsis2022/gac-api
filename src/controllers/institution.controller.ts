@@ -81,11 +81,14 @@ export class InstitutionController {
             error = { statusCode: 404, json: { message: RoleMessage.NOT_FOUND } }
             throw new Error('')
           }
-          await this.userRolesRepository.create({
-            institutionId: institution.id,
-            userId: institution.managerId,
-            roleId: role.id
-          })
+          await this.userRolesRepository.create(
+            {
+              institutionId: institution.id,
+              userId: institution.managerId,
+              roleId: role.id
+            },
+            { trx: tx }
+          )
         }
       })
 
