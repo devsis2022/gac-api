@@ -1,4 +1,4 @@
-import { Institution, PrismaClient, Role, User, UserRole } from '@prisma/client'
+import { Prisma, PrismaClient, User } from '@prisma/client'
 import { injectable } from 'inversify'
 import { LoginDTO } from 'src/dto/auth/login.dto'
 import { encryptMd5 } from 'src/util/encrypt.util'
@@ -57,6 +57,23 @@ export class PrismaUserRepository implements UserRepository {
     return this.prisma.user.findFirst({
       where: { id: userId },
       include: { userRole: { include: { institution: true, role: true } } }
+    })
+  }
+
+  async updatePassword(
+    userId: number,
+    password: string,
+    options?: { trx?: Prisma.TransactionClient }
+  ): Promise<any> {
+    const prisma = options?.trx ?? this.prisma
+
+    return prisma.user.update({
+      data: {
+        password: encryptMd5(password)
+      },
+      where: {
+        id: userId
+      }
     })
   }
 }

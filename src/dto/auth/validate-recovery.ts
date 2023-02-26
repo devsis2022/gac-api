@@ -1,4 +1,4 @@
 export interface ValidateRecoveryDTO {
   email: string
-  code: string
+  recoveryCode: number
 }

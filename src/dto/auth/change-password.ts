@@ -1,5 +1,5 @@
 export interface ChangePasswordDTO {
   email: string
-  code: string
+  recoveryCode: number
   password: string
 }
