@@ -5,6 +5,7 @@ import * as swaggerConfig from '../../swagger.json'
 import { authRoutes } from '@routes/auth.routes'
 import { routes as institutionRoutes } from '@routes/institutions.routes'
 import { userRoutes } from '@routes/user.routes'
+import { courseRoutes } from '@routes/course.routes'
 
 export class Application {
   private express: Express.Application
@@ -19,8 +20,9 @@ export class Application {
 
   private initRoutes(): void {
     this.express.use('/auth', authRoutes)
-    this.express.use('/institution', institutionRoutes)
     this.express.use('/user', userRoutes)
+    this.express.use('/institution', institutionRoutes)
+    this.express.use('/institution', courseRoutes)
   }
 
   init(): void {

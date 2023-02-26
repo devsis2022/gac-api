@@ -1,0 +1,4 @@
+export enum CourseMessage {
+  NOT_FOUND = 'COURSE_NOT_FOUND',
+  CREATE_ERROR = 'CREATE_COURSE_FAILED'
+}

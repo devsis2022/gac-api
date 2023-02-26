@@ -44,7 +44,6 @@ export class InstitutionController {
     ...input
   }: InputCreateInstitutionDTO): Promise<ControllerResponse<OutputCreateInstitutionDTO>> {
     try {
-      console.log(input)
       const institution = await this.institutionRepository.create({
         ...input,
         managerId: Number(userId)
