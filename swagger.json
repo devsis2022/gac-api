@@ -1150,6 +1150,71 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Courses"
+        ],
+        "parameters": [
+          {
+            "description": "ID referente á instituição que contém o curso",
+            "name": "institutionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "description": "ID do curso",
+            "name": "courseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "summary": "Deletando um curso",
+        "description": "Rota exclusiva para gestores. A deleção ocorre removendo o coordenador do curso. Com isso, o curso ficará inerte",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Curso deletado (soft)"
+          },
+          "401": {
+            "description": "Usuário não autorizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedUser"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Usuário não é um manager da instituição em questão",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "USER_IS_NOT_AUTHORIZED"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
