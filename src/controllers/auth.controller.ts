@@ -34,7 +34,7 @@ export class AuthController {
 
   async signin(input: SigninDTO): Promise<ControllerResponse> {
     input.username = input.username ?? input.email.split('@')[0]
-
+    input.cpf = input.cpf.replace(/\D/g, '')
     const { email, username } = input
 
     const user = await this.userRepository.findByEmailOrUsername(email, username)
@@ -48,6 +48,7 @@ export class AuthController {
 
       return { statusCode: 201, json: undefined }
     } catch (err) {
+      console.log(err)
       return { statusCode: 500, json: { message: PersistenceMessages.FAILED_TO_CREATE_ENTITY } }
     }
   }
