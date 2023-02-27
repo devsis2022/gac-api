@@ -901,157 +901,157 @@
             }
           }
         }
-      },
-      "/user/whoami": {
-        "get": {
-          "tags": [
-            "Users"
-          ],
-          "security": [
-            {
-              "bearer": []
-            }
-          ],
-          "summary": "Resgatar dados do usuário",
-          "description": "Dados pessoais do usuário e suas respectivas roles",
-          "responses": {
-            "200": {
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "user": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "number",
-                            "example": 1
-                          },
-                          "name": {
-                            "type": "string",
-                            "example": "Tenessey Stormborn"
-                          },
-                          "username": {
-                            "type": "string",
-                            "example": "tessey"
-                          },
-                          "email": {
-                            "type": "string",
-                            "example": "winterscommin@yahoo.com"
-                          },
-                          "cpf": {
-                            "type": "string",
-                            "example": "46508503049"
-                          },
-                          "createdAt": {
-                            "type": "string",
-                            "example": "2023-02-25T22:33:16.169Z"
-                          },
-                          "updatedAt": {
-                            "type": "string",
-                            "example": "2023-02-25T22:33:16.169Z"
-                          }
+      }
+    },
+    "/user/whoami": {
+      "get": {
+        "summary": "Resgatar dados do usuário",
+        "description": "Dados pessoais do usuário e suas respectivas roles",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Tenessey Stormborn"
+                        },
+                        "username": {
+                          "type": "string",
+                          "example": "tessey"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "winterscommin@yahoo.com"
+                        },
+                        "cpf": {
+                          "type": "string",
+                          "example": "46508503049"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "example": "2023-02-25T22:33:16.169Z"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "example": "2023-02-25T22:33:16.169Z"
                         }
-                      },
-                      "roles": {
-                        "type": "array",
-                        "items": {
-                          "oneOf": [
-                            {
-                              "type": "object",
-                              "properties": {
-                                "name": {
-                                  "type": "string",
-                                  "example": "admin"
-                                }
-                              }
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "name": {
-                                  "type": "string",
-                                  "example": "manager"
-                                },
-                                "institutionId": {
-                                  "type": "number",
-                                  "example": 1
-                                },
-                                "institutionName": {
-                                  "type": "string",
-                                  "example": "Instituto Federal de Tecnologia e Ciências sul-riograndense"
-                                },
-                                "institutionNickname": {
-                                  "type": "string",
-                                  "example": "ifsul"
-                                }
-                              }
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "name": {
-                                  "type": "string",
-                                  "example": "coordinator"
-                                },
-                                "institutionId": {
-                                  "type": "number",
-                                  "example": 1
-                                },
-                                "institutionName": {
-                                  "type": "string",
-                                  "example": "Instituto Federal de Tecnologia e Ciências sul-riograndense"
-                                },
-                                "institutionNickname": {
-                                  "type": "string",
-                                  "example": "ifsul"
-                                },
-                                "courseId": {
-                                  "type": "number",
-                                  "example": 1
-                                },
-                                "courseName": {
-                                  "type": "string",
-                                  "example": "TADS"
-                                }
-                              }
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "name": {
-                                  "type": "string",
-                                  "example": "student"
-                                },
-                                "institutionId": {
-                                  "type": "number",
-                                  "example": 1
-                                },
-                                "institutionName": {
-                                  "type": "string",
-                                  "example": "Instituto Federal de Tecnologia e Ciências sul-riograndense"
-                                },
-                                "institutionNickname": {
-                                  "type": "string",
-                                  "example": "ifsul"
-                                },
-                                "registrationId": {
-                                  "type": "number",
-                                  "example": 1
-                                },
-                                "courseId": {
-                                  "type": "number",
-                                  "example": 1
-                                },
-                                "courseName": {
-                                  "type": "string",
-                                  "example": "TADS"
-                                }
+                      }
+                    },
+                    "roles": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "admin"
                               }
                             }
-                          ]
-                        }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "manager"
+                              },
+                              "institutionId": {
+                                "type": "number",
+                                "example": 1
+                              },
+                              "institutionName": {
+                                "type": "string",
+                                "example": "Instituto Federal de Tecnologia e Ciências sul-riograndense"
+                              },
+                              "institutionNickname": {
+                                "type": "string",
+                                "example": "ifsul"
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "coordinator"
+                              },
+                              "institutionId": {
+                                "type": "number",
+                                "example": 1
+                              },
+                              "institutionName": {
+                                "type": "string",
+                                "example": "Instituto Federal de Tecnologia e Ciências sul-riograndense"
+                              },
+                              "institutionNickname": {
+                                "type": "string",
+                                "example": "ifsul"
+                              },
+                              "courseId": {
+                                "type": "number",
+                                "example": 1
+                              },
+                              "courseName": {
+                                "type": "string",
+                                "example": "TADS"
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "student"
+                              },
+                              "institutionId": {
+                                "type": "number",
+                                "example": 1
+                              },
+                              "institutionName": {
+                                "type": "string",
+                                "example": "Instituto Federal de Tecnologia e Ciências sul-riograndense"
+                              },
+                              "institutionNickname": {
+                                "type": "string",
+                                "example": "ifsul"
+                              },
+                              "registrationId": {
+                                "type": "number",
+                                "example": 1
+                              },
+                              "courseId": {
+                                "type": "number",
+                                "example": 1
+                              },
+                              "courseName": {
+                                "type": "string",
+                                "example": "TADS"
+                              }
+                            }
+                          }
+                        ]
                       }
                     }
                   }
