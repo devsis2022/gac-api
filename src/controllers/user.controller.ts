@@ -2,6 +2,7 @@ import { ControllerResponse } from '@core/interfaces/controller'
 import { Roles } from '@core/interfaces/roles'
 import { UserMessage } from '@core/messages/user.message'
 import { inject, injectable } from 'inversify'
+import { InputListUsersDTO, OutputListUsersDTO } from 'src/dto/user/list.dto'
 import { FormatedRoles, InputShowMeDTO, OutputShowMeDTO } from 'src/dto/user/show-me.dto'
 import { CourseRepository, CourseToken } from 'src/repositories/interfaces/course.repository'
 import {
@@ -82,6 +83,16 @@ export class UserController {
     } catch (err) {
       console.log(err)
       return { statusCode: 500, json: { message: UserMessage.USER_GET_INFORMATION } }
+    }
+  }
+
+  async list(input: InputListUsersDTO): Promise<ControllerResponse<OutputListUsersDTO>> {
+    try {
+      const users = await this.userRepository.findMany({ search: input.search })
+      return { statusCode: 200, json: users }
+    } catch (err) {
+      console.log(err)
+      return { statusCode: 500, json: { message: UserMessage.LIST_ERROR } }
     }
   }
 }

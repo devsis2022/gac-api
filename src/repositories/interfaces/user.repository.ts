@@ -1,5 +1,6 @@
 import { Institution, Prisma, Role, User, UserRole } from '@prisma/client'
 import { LoginDTO } from 'src/dto/auth/login.dto'
+import { OutputListUsersDTO } from 'src/dto/user/list.dto'
 
 export const UserToken = Symbol.for('UserRepository')
 
@@ -14,6 +15,7 @@ export interface UserRepository {
     password: string,
     options?: { trx?: Prisma.TransactionClient }
   ): Promise<any>
+  findMany(input: { search: string }): Promise<OutputListUsersDTO>
 }
 
 export type UserWithRelations =

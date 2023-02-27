@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient, User } from '@prisma/client'
 import { injectable } from 'inversify'
 import { LoginDTO } from 'src/dto/auth/login.dto'
+import { OutputListUsersDTO } from 'src/dto/user/list.dto'
 import { encryptMd5 } from 'src/util/encrypt.util'
 import { UserRepository, UserWithRelations } from './interfaces/user.repository'
 
@@ -79,6 +80,20 @@ export class PrismaUserRepository implements UserRepository {
       },
       where: {
         id: userId
+      }
+    })
+  }
+
+  async findMany(input: { search: string }): Promise<OutputListUsersDTO> {
+    return this.prisma.user.findMany({
+      where: {
+        username: { contains: input.search, mode: 'insensitive' }
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        username: true
       }
     })
   }

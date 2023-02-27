@@ -1062,6 +1062,63 @@
         }
       }
     },
+    "/user": {
+      "get": {
+        "summary": "Listar usuários através de um filtro",
+        "description": "Listando usuários através da query string 'search'",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "example": "tess"
+            },
+            "description": "A chamada só irá funcionar se este campo existir e não for vazio."
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Tenessey Stormborn"
+                      },
+                      "username": {
+                        "type": "string",
+                        "example": "tessey"
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "winterscommin@yahoo.com"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/institution/{institutionId}/courses/{courseId}": {
       "put": {
         "tags": [
