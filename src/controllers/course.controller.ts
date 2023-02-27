@@ -9,6 +9,7 @@ import { UserMessage } from '@core/messages/user.message'
 import { Prisma, PrismaClient } from '@prisma/client'
 import { inject, injectable } from 'inversify'
 import { InputCreateCourseDTO, OutputCreateCourseDTO } from 'src/dto/course/create.dto'
+import { InputDeleteCourseDTO } from 'src/dto/course/delete.dto'
 import { InputListCoursesDTO, OutputListCoursesDTO } from 'src/dto/course/list.dto'
 import { InputUpdateCourseDTO, OutputUpdateCourseDTO } from 'src/dto/course/update.dto'
 import { CourseRepository, CourseToken } from 'src/repositories/interfaces/course.repository'
@@ -98,7 +99,6 @@ export class CourseController {
 
   async update(input: InputUpdateCourseDTO): Promise<ControllerResponse<OutputUpdateCourseDTO>> {
     try {
-      console.log({ input })
       const institution = await this.institutionRepository.findOne(Number(input.institutionId))
       if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
       if (institution.managerId !== input.userId)
@@ -132,18 +132,20 @@ export class CourseController {
               },
               { trx: tx }
             )
-            const isStillCoordinator = await this.userRoleRepository.isStillCoordinator({
-              userId: Number(course.coordinatorId),
-              institutionId: Number(course.institutionId)
-            })
-            if (!isStillCoordinator) {
-              await this.userRoleRepository.delete(
-                {
-                  userId: Number(course.coordinatorId),
-                  institutionId: Number(course.institutionId)
-                },
-                { trx: tx }
-              )
+            if (course.coordinatorId) {
+              const isStillCoordinator = await this.userRoleRepository.isStillCoordinator({
+                userId: Number(course.coordinatorId),
+                institutionId: Number(course.institutionId)
+              })
+              if (!isStillCoordinator) {
+                await this.userRoleRepository.delete(
+                  {
+                    userId: Number(course.coordinatorId),
+                    institutionId: Number(course.institutionId)
+                  },
+                  { trx: tx }
+                )
+              }
             }
           })
           return { statusCode: 204, json: { id: course.id } }
@@ -162,6 +164,44 @@ export class CourseController {
     } catch (err) {
       console.log(err)
       return { statusCode: 500, json: { message: CourseMessage.CREATE_ERROR } }
+    }
+  }
+
+  async delete(input: InputDeleteCourseDTO): Promise<ControllerResponse<undefined>> {
+    try {
+      const institution = await this.institutionRepository.findOne(Number(input.institutionId))
+      if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
+      if (institution.managerId !== input.userId)
+        return { statusCode: 401, json: { message: AuthMessage.UNAUTHORIZED } }
+      const course = await this.courseRepository.findOne({
+        courseId: Number(input.courseId),
+        institutionId: Number(input.institutionId)
+      })
+      if (!course) return { statusCode: 404, json: { message: CourseMessage.NOT_FOUND } }
+      await this.prisma.$transaction(async (tx) => {
+        await this.courseRepository.update(
+          { courseId: course.id },
+          { coordinatorId: null },
+          { trx: tx }
+        )
+        const isStillCoordinator = await this.userRoleRepository.isStillCoordinator({
+          userId: Number(course.coordinatorId),
+          institutionId: Number(course.institutionId)
+        })
+        if (!isStillCoordinator) {
+          await this.userRoleRepository.delete(
+            {
+              userId: Number(course.coordinatorId),
+              institutionId: Number(course.institutionId)
+            },
+            { trx: tx }
+          )
+        }
+      })
+      return { statusCode: 204, json: undefined }
+    } catch (err) {
+      console.log(err)
+      return { statusCode: 500, json: { message: CourseMessage.DELETE_ERROR } }
     }
   }
 }
