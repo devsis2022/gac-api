@@ -444,6 +444,82 @@
                           "example": "2023-02-25T22:35:16.978Z"
                         }
                       }
+                    },
+                    "course": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number",
+                                "example": 2
+                              },
+                              "name": {
+                                "type": "Engenharia da Computação",
+                                "example": 2
+                              },
+                              "description": {
+                                "type": "string",
+                                "example": "Descrição do curso | null"
+                              },
+                              "institutionId": {
+                                "type": "number",
+                                "example": 3
+                              },
+                              "coordinatorId": {
+                                "type": "number",
+                                "example": 2
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2023-02-25T22:35:16.978Z"
+                              },
+                              "updatedAt": {
+                                "type": "string",
+                                "example": "2023-02-25T22:35:16.978Z"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "announcement": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number",
+                                "example": 2
+                              },
+                              "name": {
+                                "type": "Engenharia da Computação#1.1.0",
+                                "example": 2
+                              },
+                              "institutionId": {
+                                "type": "number",
+                                "example": 3
+                              },
+                              "status": {
+                                "type": "string",
+                                "example": "ACTIVE | DISABLE"
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2023-02-25T22:35:16.978Z"
+                              },
+                              "updatedAt": {
+                                "type": "string",
+                                "example": "2023-02-25T22:35:16.978Z"
+                              }
+                            }
+                          }
+                        ]
+                      }
                     }
                   }
                 }
