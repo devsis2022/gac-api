@@ -70,7 +70,6 @@ export class CourseController {
 
   async list(input: InputListCoursesDTO): Promise<ControllerResponse<OutputListCoursesDTO>> {
     try {
-      console.log(input)
       const page = input?.page ? Number(input.page) : 1
       const count = input?.count ? Number(input?.count) : 10
       const institution = await this.institutionRepository.findOne(Number(input.institutionId), {

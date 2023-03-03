@@ -1,6 +1,10 @@
 import { ContainerModule, interfaces } from 'inversify'
+import { PrismaActivityRepository } from 'src/repositories/activity.repository'
+import { PrismaAnnouncementRepository } from 'src/repositories/announcement.repository'
 import { PrismaCourseRepository } from 'src/repositories/course.repository'
 import { PrismaInstitutionRepository } from 'src/repositories/institution.repository'
+import { ActivityToken } from 'src/repositories/interfaces/activity.repository'
+import { AnnouncementToken } from 'src/repositories/interfaces/announcement.repository'
 import { CourseToken } from 'src/repositories/interfaces/course.repository'
 import { InstitutionToken } from 'src/repositories/interfaces/institution.repository'
 import { RoleToken } from 'src/repositories/interfaces/role.respository'
@@ -22,4 +26,6 @@ export const repositoryModule = new ContainerModule((bind: interfaces.Bind) => {
   bind(CourseToken).to(PrismaCourseRepository)
   bind(UserRegistrationToken).to(PrismaUserRegistrationRepository)
   bind(UserRecoveryToken).to(PrismaUserRecoveryRepository)
+  bind(AnnouncementToken).to(PrismaAnnouncementRepository)
+  bind(ActivityToken).to(PrismaActivityRepository)
 })

@@ -88,18 +88,19 @@ enum InstitutionStatus {
 }
 
 model Institution {
-  id          Int               @id @default(autoincrement())
-  name        String            @unique @db.VarChar(255)
-  nickname    String?           @unique @db.VarChar(100)
-  description String?
-  status      InstitutionStatus @default(pending)
-  managerId   Int               @map("manager_id")
-  manager     User              @relation(fields: [managerId], references: [id])
-  course      Course[]
-  UserRole    UserRole[]
-  createdAt   DateTime          @default(now()) @map("created_at")
-  updatedAt   DateTime          @updatedAt @map("updated_at")
-  deletedAt   DateTime?         @map("deleted_at")
+  id           Int               @id @default(autoincrement())
+  name         String            @unique @db.VarChar(255)
+  nickname     String?           @unique @db.VarChar(100)
+  description  String?
+  status       InstitutionStatus @default(pending)
+  managerId    Int               @map("manager_id")
+  manager      User              @relation(fields: [managerId], references: [id])
+  course       Course[]
+  UserRole     UserRole[]
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  deletedAt    DateTime?         @map("deleted_at")
+  Announcement Announcement[]
 
   @@map("institutions")
 }
@@ -126,13 +127,15 @@ enum AnnouncementStatus {
 }
 
 model Announcement {
-  id        Int                @id @default(autoincrement())
-  name      String             @db.VarChar(255)
-  status    AnnouncementStatus
-  class     Class[]
-  activity  Activity[]
-  createdAt DateTime           @default(now()) @map("created_at")
-  updatedAt DateTime           @updatedAt @map("updated_at")
+  id            Int                @id @default(autoincrement())
+  name          String             @db.VarChar(255)
+  institutionId Int
+  status        AnnouncementStatus
+  class         Class[]
+  activity      Activity[]
+  institution   Institution        @relation(fields: [institutionId], references: [id])
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
 
   @@map("announcements")
 }
