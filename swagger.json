@@ -1443,6 +1443,98 @@
             }
           }
         }
+      },
+      "get": {
+        "summary": "Listar editais de uma instituição",
+        "description": "Rota exclusiva para administradores e gestores",
+        "tags": [
+          "Announcements"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "example": "ACTIVE | DISABLE"
+            },
+            "description": "Se vazio, retorna ambos status."
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Listagem paginada. Página padrão: 1"
+          },
+          {
+            "in": "query",
+            "name": "count",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Items por página padrão: 10"
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "count": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "2023-2-engenharia-da-computacao#1.0.0"
+                          },
+                          "institutionId": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "ACTIVE"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2023-02-25T22:35:16.978Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2023-02-25T22:35:16.978Z"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
