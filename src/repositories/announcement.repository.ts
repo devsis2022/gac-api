@@ -33,4 +33,21 @@ export class PrismaAnnouncementRepository implements AnnouncementRepository {
       data: { name: input.name, status: 'ACTIVE', institutionId: input.institutionId }
     })
   }
+
+  async list(input: {
+    page: number
+    count: number
+    institutionId: number
+    status?: AnnouncementStatus
+  }): Promise<Announcement[]> {
+    const whereOptions: Prisma.AnnouncementWhereInput[] = [{ institutionId: input.institutionId }]
+    if (input.status) whereOptions.push({ status: input.status })
+    return this.prisma.announcement.findMany({
+      where: {
+        AND: whereOptions
+      },
+      skip: (input.page - 1) * input.count,
+      take: input.count
+    })
+  }
 }

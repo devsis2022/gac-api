@@ -12,4 +12,10 @@ export interface AnnouncementRepository {
     input: { name: string; institutionId: number },
     options?: { trx?: Prisma.TransactionClient }
   ): Promise<Announcement>
+  list(input: {
+    page: number
+    count: number
+    institutionId: number
+    status?: AnnouncementStatus
+  }): Promise<Announcement[]>
 }

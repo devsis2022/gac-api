@@ -1,5 +1,6 @@
 import { prismaClientToken } from '@config/prisma-client'
 import { ControllerResponse } from '@core/interfaces/controller'
+import { Roles } from '@core/interfaces/roles'
 import { AnnouncementMessage } from '@core/messages/announcement.messages'
 import { AuthMessage } from '@core/messages/auth.messages'
 import { InstitutionMessage } from '@core/messages/institution.messages'
@@ -9,6 +10,10 @@ import {
   InputCreateAnnouncementDTO,
   OutputCreateAnnouncementDTO
 } from 'src/dto/announcement/create.dto'
+import {
+  InputListAnnouncementsDTO,
+  OutputListAnnouncementsDTO
+} from 'src/dto/announcement/list.dto'
 import { ActivityRepository, ActivityToken } from 'src/repositories/interfaces/activity.repository'
 import {
   AnnouncementRepository,
@@ -18,6 +23,7 @@ import {
   InstitutionRepository,
   InstitutionToken
 } from 'src/repositories/interfaces/institution.repository'
+import { UserRoleRepository, UserRoleToken } from 'src/repositories/interfaces/user-role.repository'
 
 @injectable()
 export class AnnouncementController {
@@ -25,7 +31,8 @@ export class AnnouncementController {
     @inject(prismaClientToken) private prisma: PrismaClient,
     @inject(AnnouncementToken) private announcementRepository: AnnouncementRepository,
     @inject(InstitutionToken) private institutionRepository: InstitutionRepository,
-    @inject(ActivityToken) private activityRepository: ActivityRepository
+    @inject(ActivityToken) private activityRepository: ActivityRepository,
+    @inject(UserRoleToken) private userRoleRepository: UserRoleRepository
   ) {}
 
   async create(
@@ -59,6 +66,37 @@ export class AnnouncementController {
     } catch (err) {
       console.log(err)
       return { statusCode: 500, json: { message: AnnouncementMessage.CREATE_ERROR } }
+    }
+  }
+
+  async list(
+    input: InputListAnnouncementsDTO
+  ): Promise<ControllerResponse<OutputListAnnouncementsDTO>> {
+    try {
+      const page = input?.page ? Number(input.page) : 1
+      const count = input?.count ? Number(input?.count) : 10
+      const institution = await this.institutionRepository.findOne(Number(input.institutionId), {
+        relations: true
+      })
+      if (!institution) return { statusCode: 404, json: { message: InstitutionMessage.NOT_FOUND } }
+      const userRoles = await this.userRoleRepository.getByUserId(input.userId)
+      if (
+        !userRoles.find((userRole) => userRole.role.name === Roles.ADMIN) &&
+        institution.managerId !== input.userId
+      ) {
+        return { statusCode: 401, json: { message: AuthMessage.UNAUTHORIZED } }
+      }
+      const listInput = {
+        page,
+        count,
+        institutionId: institution.id
+      }
+      if (input.status) Reflect.set(listInput, 'status', input.status)
+      const list = await this.announcementRepository.list(listInput)
+      return { statusCode: 200, json: { page, count: list.length, data: list } }
+    } catch (err) {
+      console.log(err)
+      return { statusCode: 500, json: { message: AnnouncementMessage.LIST_ERROR } }
     }
   }
 }
