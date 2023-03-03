@@ -20,7 +20,7 @@ export interface InstitutionRepository {
 export interface ListOptions {
   page: number
   count: number
-  status: InstitutionStatus
+  status?: InstitutionStatus
 }
 
 export type InstitutionWithRelations = Institution & {

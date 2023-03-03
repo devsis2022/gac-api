@@ -159,8 +159,10 @@ export class InstitutionController {
     input: InputListInstitutionsDto
   ): Promise<ControllerResponse<OutputListInstitutionsDto>> {
     try {
-      const { page = 1, count = 10, status = 'pending' } = input
-      const institutions = await this.institutionRepository.list({ page, count, status })
+      const { page = 1, count = 10 } = input
+      const query = { page, count }
+      if (input.status) Reflect.set(query, 'status', input.status)
+      const institutions = await this.institutionRepository.list(query)
       return { statusCode: 200, json: { page, count: institutions.length, data: institutions } }
     } catch (err) {
       console.log(err)

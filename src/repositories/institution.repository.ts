@@ -53,7 +53,7 @@ export class PrismaInstitutionRepository implements InstitutionRepository {
     return this.prisma.institution.findMany({
       skip: (input.page - 1) * input.count,
       take: input.count,
-      where: { status: input.status },
+      ...(input.status && { where: { status: input.status } }),
       orderBy: { updatedAt: 'desc' }
     })
   }
