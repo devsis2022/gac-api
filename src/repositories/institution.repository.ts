@@ -20,7 +20,10 @@ export class PrismaInstitutionRepository implements InstitutionRepository {
   }
 
   async findOne(id: number): Promise<InstitutionWithRelations | null> {
-    return this.prisma.institution.findUnique({ where: { id }, include: { manager: true } })
+    return this.prisma.institution.findUnique({
+      where: { id },
+      include: { manager: true, course: true, announcement: true }
+    })
   }
 
   async activate(id: number, options?: { trx?: Prisma.TransactionClient }): Promise<Institution> {
