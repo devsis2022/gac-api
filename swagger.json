@@ -27,6 +27,10 @@
     {
       "name": "Users",
       "description": "Ações e detalhes referentes aos usuários"
+    },
+    {
+      "name": "Announcements",
+      "description": "Ações referentes aos editais que estipulam limite de horas complementares"
     }
   ],
   "paths": {
@@ -1267,6 +1271,97 @@
                       "example": "USER_IS_NOT_AUTHORIZED"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institution/{institutionId}/announcement": {
+      "post": {
+        "tags": [
+          "Announcements"
+        ],
+        "summary": "Criar novo edital",
+        "description": "Rota exclusiva para gestores",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "activities"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "TADS-123456"
+                  },
+                  "activities": {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Cursos on-line"
+                            },
+                            "maxMinutes": {
+                              "type": "number",
+                              "example": 1800
+                            }
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Artigos"
+                            },
+                            "maxMinutes": {
+                              "type": "number",
+                              "example": 3600
+                            }
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "Seminários"
+                            },
+                            "maxMinutes": {
+                              "type": "number",
+                              "example": 1200
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Cadastrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEntity"
                 }
               }
             }
